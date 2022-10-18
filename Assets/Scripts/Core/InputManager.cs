@@ -1,10 +1,9 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class InputManager
 {
-    public event Action OnFire = () => {};
+    public bool IsFiring { get; private set; }
     
     public Vector2 Move { get; private set; }
     public Vector2 Look { get; private set; }
@@ -39,6 +38,7 @@ public class InputManager
         _playerControls.Player.Rotate.canceled += ProcessRotateInput;
         
         _playerControls.Player.Fire.performed += ProcessFireInput;
+        _playerControls.Player.Fire.canceled += ProcessFireInput;
     }
 
     private void Unsubscribe()
@@ -48,6 +48,9 @@ public class InputManager
         
         _playerControls.Player.Rotate.performed -= ProcessRotateInput;
         _playerControls.Player.Rotate.canceled -= ProcessRotateInput;
+        
+        _playerControls.Player.Fire.performed -= ProcessFireInput;
+        _playerControls.Player.Fire.canceled -= ProcessFireInput;
     }
 
     private void ProcessMoveInput(InputAction.CallbackContext ctx)
@@ -62,6 +65,6 @@ public class InputManager
     
     private void ProcessFireInput(InputAction.CallbackContext ctx)
     {
-        OnFire?.Invoke();
+        IsFiring = ctx.ReadValue<bool>();
     }
 }
