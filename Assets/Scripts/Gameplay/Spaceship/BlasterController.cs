@@ -12,8 +12,6 @@
     public void TryToFire()
     {
         if (_model.CanFire())
-        {
             _behaviour.Fire(_model.Damage);
-        }
     }
 }
