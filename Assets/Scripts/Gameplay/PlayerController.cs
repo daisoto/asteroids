@@ -6,9 +6,10 @@ public class PlayerController: IInitializable
     private readonly InputManager _inputManager;
     private readonly SpaceshipBehaviour _spaceshipBehaviour;
 
-    public PlayerController(InputManager inputManager)
+    public PlayerController(InputManager inputManager, SpaceshipBehaviour spaceshipBehaviour)
     {
         _inputManager = inputManager;
+        _spaceshipBehaviour = spaceshipBehaviour;
     }
 
     public void Initialize()
@@ -22,6 +23,7 @@ public class PlayerController: IInitializable
     public void SetActive(bool flag)
     {
         _inputManager.SetActive(flag);
+        _spaceshipBehaviour.enabled = flag;
     }
     
     private Vector2 GetMoving() => _inputManager.Move;

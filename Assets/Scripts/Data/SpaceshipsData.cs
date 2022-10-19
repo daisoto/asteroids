@@ -6,13 +6,13 @@ using UnityEngine;
 public class SpaceshipsData : ScriptableObject
 {
     [SerializeField]
-    private SpaceShipData[] _spaceShipData;
+    private SpaceshipData[] _spaceShipData;
     
-    public IList<SpaceShipData> SpaceShipData => _spaceShipData;
+    public IList<SpaceshipData> SpaceShipData => _spaceShipData;
 }
 
 [Serializable]
-public struct SpaceShipData
+public struct SpaceshipData
 {
     [SerializeField]
     private string _title;

@@ -1,7 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
+using System.Linq;
 using UnityEngine;
 using Zenject;
+
+public interface ISignal { }
 
 public class ProjectInstaller : MonoInstaller
 {
@@ -10,7 +12,7 @@ public class ProjectInstaller : MonoInstaller
     
     public override void InstallBindings()
     {
-        Debug.Log("Binding Project Container");
+        BindSignals();
         
         Container.BindInstance(_spaceshipsData);
         
@@ -18,11 +20,34 @@ public class ProjectInstaller : MonoInstaller
             .AsSingle()
             .NonLazy();
 
-        Container.BindInterfacesAndSelfTo<AudioController>()
-            .FromNewComponentOnNewGameObject()
+        Container.BindInterfacesAndSelfTo<BlasterModel>()
+            .AsSingle()
+            .NonLazy();
+
+        Container.BindInterfacesAndSelfTo<AccelerationModel>()
+            .AsSingle()
+            .NonLazy();
+
+        Container.BindInterfacesAndSelfTo<HealthModel>()
+            .AsSingle()
+            .NonLazy();
+
+        Container.BindInterfacesAndSelfTo<PlayerController>()
             .AsSingle()
             .NonLazy();
 
         SignalBusInstaller.Install(Container);
+    }
+    
+    private void BindSignals()
+    {
+        var types = AppDomain.CurrentDomain.GetAssemblies()
+            .SelectMany(s => s.GetTypes())
+            .Where(p => typeof(ISignal).IsAssignableFrom(p)
+                        && !p.IsInterface
+                        && !p.IsAbstract);                        
+                        
+        foreach (var type in types) 
+            Container.DeclareSignal(type);
     }
 }
