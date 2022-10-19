@@ -1,16 +1,20 @@
-﻿public class SpaceshipModel
+﻿using UnityEngine;
+
+public class SpaceshipModel
 {
     private readonly HealthModel _healthModel;
     private readonly AccelerationModel _accelerationModel;
-    private readonly BlasterModel _blasterModel;
     
+    public Texture2D Texture { get; }
+
     public SpaceshipModel(HealthModel healthModel, 
-        AccelerationModel accelerationModel, 
-        BlasterModel blasterModel)
+        AccelerationModel accelerationModel,
+        Texture2D texture)
     {
         _healthModel = healthModel;
         _accelerationModel = accelerationModel;
-        _blasterModel = blasterModel;
+        
+        Texture = texture;
     }
     
     public void DecreaseHealth(int damage) => 
@@ -21,7 +25,4 @@
 
     public void Decelerate(float deltaTime, out float speed) => 
         _accelerationModel.Decelerate(deltaTime, out speed);
-    
-    public bool TryToFire(out int damage) => 
-        _blasterModel.TryToFire(out damage);
 }

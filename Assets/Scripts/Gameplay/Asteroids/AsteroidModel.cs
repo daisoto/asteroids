@@ -11,4 +11,4 @@
     }
 }
 
-public enum AsteroidSize { Small, Big }
+public enum AsteroidSize { Small, Medium, Big }

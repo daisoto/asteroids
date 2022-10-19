@@ -1,34 +1,51 @@
+using System;
+using UniRx;
 using UnityEngine;
-using Zenject;
 
-public class PlayerController: IInitializable
+public class PlayerController: IDisposable 
 {
     private readonly InputManager _inputManager;
-    private readonly SpaceshipBehaviour _spaceshipBehaviour;
+    private readonly SpaceshipController _spaceshipController;
+    private readonly BlasterController _blasterController;
+    
+    private IDisposable _observation;
+    
+    private Vector2 _moving => _inputManager.Move;
+    private Vector2 _rotating => _inputManager.Look;
+    private bool _isFiring => _inputManager.IsFiring;
 
-    public PlayerController(InputManager inputManager, SpaceshipBehaviour spaceshipBehaviour)
+    public PlayerController(InputManager inputManager, 
+        SpaceshipController spaceshipController,
+        BlasterController blasterController)
     {
         _inputManager = inputManager;
-        _spaceshipBehaviour = spaceshipBehaviour;
+        _spaceshipController = spaceshipController;
+        _blasterController = blasterController;
     }
-
-    public void Initialize()
+    
+    public void Dispose()
     {
-        _spaceshipBehaviour
-            .SetMover(GetMoving)
-            .SetRotator(GetRotating)
-            .SetFirer(IsFiring);
+        _observation?.Dispose();
     }
     
     public void SetActive(bool flag)
     {
         _inputManager.SetActive(flag);
-        _spaceshipBehaviour.enabled = flag;
+        
+        if (flag)
+            SetObservation();
+        else
+            _observation?.Dispose();
     }
     
-    private Vector2 GetMoving() => _inputManager.Move;
-    
-    private Vector2 GetRotating() => _inputManager.Look;
-    
-    private bool IsFiring() => _inputManager.IsFiring;
+    private void SetObservation()
+    {
+        _observation = Observable.EveryUpdate().Subscribe(_ =>
+        {
+            _spaceshipController.Move(_moving);
+            _spaceshipController.Rotate(_rotating);
+            if (_isFiring)
+                _blasterController.TryToFire();
+        });
+    }
 }

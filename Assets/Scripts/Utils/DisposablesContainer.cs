@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 using System;
 
-public class DisposablesContainer
+public class DisposablesContainer: IDisposable
 {
-    public int size => disposables.Count;
+    public int Size => disposables.Count;
 
     private List<IDisposable> disposables = new List<IDisposable>();
-
-    ~DisposablesContainer()
+    
+    public void Dispose()
     {
         Clear();
     }
@@ -17,7 +17,7 @@ public class DisposablesContainer
         disposables.Add(disposable);
     }
 
-    public void Clear()
+    private void Clear()
     {
         disposables.ForEach(disposable => disposable?.Dispose());
         disposables.Clear();

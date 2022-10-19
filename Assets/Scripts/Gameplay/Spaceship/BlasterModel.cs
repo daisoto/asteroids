@@ -3,20 +3,20 @@ using Zenject;
 
 public class BlasterModel: ITickable
 {
-    private readonly int _damage;
+    public int Damage { get; }
+    
     private readonly float _firePeriod;
     
     private float _timer;
     
     public BlasterModel(int damage, int fireRate)
     {
-        _damage = damage;
+        Damage = damage;
         _firePeriod = 1f / fireRate;
     }
     
-    public bool TryToFire(out int damage)
+    public bool CanFire()
     {
-        damage = _damage;
         var canShoot = _timer >= _firePeriod;
         if (canShoot)
             _timer = 0;

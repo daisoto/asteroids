@@ -10,6 +10,9 @@ public class ProjectInstaller : MonoInstaller
     [SerializeField]
     private SpaceshipsData _spaceshipsData;
     
+    [SerializeField]
+    private Projectile _projectilePrefab;
+
     public override void InstallBindings()
     {
         BindSignals();
@@ -32,9 +35,16 @@ public class ProjectInstaller : MonoInstaller
             .AsSingle()
             .NonLazy();
 
-        Container.BindInterfacesAndSelfTo<PlayerController>()
+        Container.BindInterfacesAndSelfTo<PlayerController>() // todo в сцена инсталлер? 
             .AsSingle()
             .NonLazy();
+
+        Container.BindInterfacesAndSelfTo<SpaceshipController>()
+            .AsSingle()
+            .NonLazy();
+        
+        Container.BindMemoryPool<Projectile, Projectile.Pool>()
+            .FromComponentInNewPrefab(_projectilePrefab);
 
         SignalBusInstaller.Install(Container);
     }
