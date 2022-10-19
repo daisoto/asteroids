@@ -1,7 +1,6 @@
 ﻿using System;
 using UnityEngine;
 
-[RequireComponent(typeof(CharacterController))]
 public class SpaceshipBehaviour: MonoBehaviour
 {
     [SerializeField]
@@ -85,6 +84,9 @@ public class SpaceshipBehaviour: MonoBehaviour
     
     private void Fire()
     {
-        
+        if (_spaceshipModel.TryToFire(out var damage))
+        {
+            // fire projectile
+        }
     }
 }

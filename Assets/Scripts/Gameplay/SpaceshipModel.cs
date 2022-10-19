@@ -1,59 +1,27 @@
-﻿using System;
-using UnityEngine;
-
-public class SpaceshipModel
+﻿public class SpaceshipModel
 {
-    public event Action OnDeath = () => { }; 
-    public int Damage { get; } 
-    public int FireRate { get; }
-    public int MaxHealth { get; }
-    public int Health { get; private set; }
+    private readonly HealthModel _healthModel;
+    private readonly AccelerationModel _accelerationModel;
+    private readonly BlasterModel _blasterModel;
     
-    private static int _minSpeed = 0;
+    public SpaceshipModel(HealthModel healthModel, 
+        AccelerationModel accelerationModel, 
+        BlasterModel blasterModel)
+    {
+        _healthModel = healthModel;
+        _accelerationModel = accelerationModel;
+        _blasterModel = blasterModel;
+    }
     
-    private readonly int _maxSpeed;
+    public void DecreaseHealth(int damage) => 
+        _healthModel.DecreaseHealth(damage);
     
-    private readonly int _acceleration;
-    private readonly int _deceleration;
+    public void Accelerate(float deltaTime, out float speed) => 
+        _accelerationModel.Accelerate(deltaTime, out speed);
 
-    private float _speed;
+    public void Decelerate(float deltaTime, out float speed) => 
+        _accelerationModel.Decelerate(deltaTime, out speed);
     
-    public SpaceshipModel(int damage, int fireRate, int maxSpeed, 
-        int maxHealth, int acceleration, int deceleration)
-    {
-        Damage = damage;
-        FireRate = fireRate;
-        
-        MaxHealth = maxHealth;
-        Health = maxHealth;
-
-        _maxSpeed = maxSpeed;
-        _acceleration = acceleration;
-        _deceleration = deceleration;
-    }
-    
-    public void DecreaseHealth(int damage)
-    {
-        if (damage <= Health)
-        {
-            Health = 0;
-            OnDeath?.Invoke();
-        }
-        else 
-            Health -= damage;
-    }
-    
-    public void Accelerate(float deltaTime, out float speed)
-    {
-        _speed = Mathf.Lerp(_speed, _maxSpeed, _acceleration * deltaTime);
-        
-        speed = _speed;
-    }
-    
-    public void Decelerate(float deltaTime, out float speed)
-    {
-        _speed = Mathf.Lerp(_minSpeed, _speed, _deceleration * deltaTime);
-        
-        speed = _speed;
-    }
+    public bool TryToFire(out int damage) => 
+        _blasterModel.TryToFire(out damage);
 }
