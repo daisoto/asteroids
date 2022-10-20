@@ -11,6 +11,9 @@ public class ProjectInstaller : MonoInstaller
     private SpaceshipsData _spaceshipsData;
     
     [SerializeField]
+    private AsteroidsData _asteroidsData;
+    
+    [SerializeField]
     private Projectile _projectilePrefab;
 
     public override void InstallBindings()
@@ -35,18 +38,43 @@ public class ProjectInstaller : MonoInstaller
             .AsSingle()
             .NonLazy();
 
-        Container.BindInterfacesAndSelfTo<PlayerController>() // todo в сцена инсталлер? 
+        Container.BindInterfacesAndSelfTo<PlayerController>()
             .AsSingle()
             .NonLazy();
 
         Container.BindInterfacesAndSelfTo<SpaceshipController>()
             .AsSingle()
             .NonLazy();
+
+        Container.BindInterfacesAndSelfTo<AsteroidsController>()
+            .AsSingle()
+            .NonLazy();
         
         Container.BindMemoryPool<Projectile, Projectile.Pool>()
             .FromComponentInNewPrefab(_projectilePrefab);
+        
+        BindAsteroids();
 
         SignalBusInstaller.Install(Container);
+    }
+    
+    private void BindAsteroids()
+    {
+        Container.BindInstance(_asteroidsData);
+        
+        Container.BindInterfacesTo<IFactory<AsteroidBehaviour, AsteroidSize>>()
+            .FromInstance(_asteroidsData);
+        
+        Container.BindInterfacesTo<AsteroidsFactory>()
+            .AsSingle();
+        
+        Container.Bind<AsteroidsNumProvider>()
+            .WithId(AsteroidSize.Small)
+            .To<SmallAsteroidsNumProvider>();
+
+        Container.Bind<AsteroidsNumProvider>()
+            .WithId(AsteroidSize.Medium)
+            .To<MediumAsteroidsNumProvider>();
     }
     
     private void BindSignals()

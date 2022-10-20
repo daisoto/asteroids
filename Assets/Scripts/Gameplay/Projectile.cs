@@ -31,8 +31,5 @@ public class Projectile: MonoBehaviour
             _onCollision?.Invoke();
     }
     
-    public class Pool : MonoMemoryPool<Projectile>
-    {
-        
-    }
+    public class Pool : MonoMemoryPool<Projectile> { }
 }

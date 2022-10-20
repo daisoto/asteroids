@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+﻿using UnityEngine;
 
 public readonly struct AsteroidCollapseSignal: ISignal
 {

@@ -6,9 +6,8 @@ using UnityEngine;
 public class SpaceshipsData : ScriptableObject
 {
     [SerializeField]
-    private SpaceshipData[] _spaceShipData;
-    
-    public IList<SpaceshipData> SpaceShipData => _spaceShipData;
+    private SpaceshipData[] _spaceShipsData;
+    public IList<SpaceshipData> Data => _spaceShipsData;
 }
 
 [Serializable]
@@ -33,4 +32,9 @@ public struct SpaceshipData
     [SerializeField, Range(1, 3)]
     private int _speed;
     public int Speed => _speed;
+    
+    [Header("Should equals 3 due to conditions")]
+    [SerializeField]
+    private int _maxHealth;
+    public int MaxHealth => _maxHealth;
 }
