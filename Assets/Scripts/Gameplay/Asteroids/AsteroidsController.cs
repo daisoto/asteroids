@@ -24,21 +24,7 @@ public class AsteroidsController: IDisposable
         _modelsFactory = modelsFactory
             .SetOnCreated(CreateBehaviour);
         
-        _pools = new Dictionary<AsteroidSize, AsteroidsPool>
-        {
-            { 
-                AsteroidSize.Small, new AsteroidsPool(
-                    new Factory<AsteroidModel>(GetSmallModel))
-            },
-            { 
-                AsteroidSize.Medium, new AsteroidsPool(
-                    new Factory<AsteroidModel>(GetMediumModel))
-            },
-            { 
-                AsteroidSize.Big, new AsteroidsPool(
-                    new Factory<AsteroidModel>(GetBigModel))
-            }
-        };
+        _pools = GetPools();
         
         _disposablesContainer = new DisposablesContainer();
     }
@@ -78,6 +64,25 @@ public class AsteroidsController: IDisposable
             {
                 behaviour.Position = position;
             })); 
+    }
+    
+    private Dictionary<AsteroidSize, AsteroidsPool> GetPools()
+    {
+        return new Dictionary<AsteroidSize, AsteroidsPool>
+        {
+            { 
+                AsteroidSize.Small, new AsteroidsPool(
+                    new Factory<AsteroidModel>(GetSmallModel))
+            },
+            { 
+                AsteroidSize.Medium, new AsteroidsPool(
+                    new Factory<AsteroidModel>(GetMediumModel))
+            },
+            { 
+                AsteroidSize.Big, new AsteroidsPool(
+                    new Factory<AsteroidModel>(GetBigModel))
+            }
+        };
     }
     
     private AsteroidModel GetSmallModel() => _modelsFactory.Get(AsteroidSize.Small);

@@ -21,22 +21,13 @@ public class SpaceshipController: IInitializable
     
     public void Move(Vector2 delta)
     {
-        var motion = delta * GetSpeed(delta);
+        var motion = _model.Speed * delta;
         _behaviour.Move(motion);
     }
     
     public void Rotate(Vector2 position) => _behaviour.Rotate(position);
     
-    private void ReceiveDamage(int damage) => _model.DecreaseHealth(damage); 
+    public Vector3 GetBarrelPosition() =>  _behaviour.GetBarrelPosition();
     
-    private float GetSpeed(Vector2 delta)
-    {
-        float speed;
-        if (delta.Equals(Vector2.zero))
-            _model.Decelerate(Time.deltaTime, out speed);
-        else
-            _model.Accelerate(Time.deltaTime, out speed);
-        
-        return speed;
-    }
+    private void ReceiveDamage(int damage) => _model.DecreaseHealth(damage); 
 }

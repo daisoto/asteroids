@@ -11,13 +11,15 @@ public class SpaceshipsData : ScriptableObject
     
     [SerializeField]
     private ProjectileBehaviour _projectileBehaviourPrefab;
+    
+    public int MaxValue => 3;
 
     public ProjectileBehaviour GetProjectileBehaviour() => 
         Instantiate(_projectileBehaviourPrefab);
 }
 
 [Serializable]
-public struct SpaceshipData
+public class SpaceshipData
 {
     [SerializeField]
     private string _title;

@@ -1,28 +1,26 @@
-﻿using UnityEngine;
+﻿using UniRx;
+using UnityEngine;
 
 public class SpaceshipModel
 {
     private readonly HealthModel _healthModel;
-    private readonly AccelerationModel _accelerationModel;
+    private readonly ISpeedProvider _speedProvider;
     
     public Texture2D Texture { get; }
+    public float Speed => _speedProvider.Speed.Value;
+    public IReadOnlyReactiveProperty<int> Health => _healthModel.Health;
+    public int MaxHealth => _healthModel.MaxHealth;
 
     public SpaceshipModel(HealthModel healthModel, 
-        AccelerationModel accelerationModel,
+        ISpeedProvider speedProvider,
         Texture2D texture)
     {
         _healthModel = healthModel;
-        _accelerationModel = accelerationModel;
+        _speedProvider = speedProvider;
         
         Texture = texture;
     }
     
     public void DecreaseHealth(int damage) => 
         _healthModel.DecreaseHealth(damage);
-    
-    public void Accelerate(float deltaTime, out float speed) => 
-        _accelerationModel.Accelerate(deltaTime, out speed);
-
-    public void Decelerate(float deltaTime, out float speed) => 
-        _accelerationModel.Decelerate(deltaTime, out speed);
 }

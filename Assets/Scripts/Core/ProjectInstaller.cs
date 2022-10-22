@@ -20,33 +20,17 @@ public class ProjectInstaller : MonoInstaller
     {
         BindSignals();
         
+        Container.BindInstance(new SpaceshipData());
+        
         Container.BindInstance(_spaceshipsData);
         
+        Container.BindInstance(_projectileBehaviourPrefab);
+        
+        Container.BindInterfacesAndSelfTo<ShipSelectionPresenter>()
+            .AsSingle()
+            .NonLazy();
+        
         Container.BindInterfacesAndSelfTo<InputManager>()
-            .AsSingle()
-            .NonLazy();
-
-        Container.BindInterfacesAndSelfTo<BlasterModel>()
-            .AsSingle()
-            .NonLazy();
-
-        Container.BindInterfacesAndSelfTo<AccelerationModel>()
-            .AsSingle()
-            .NonLazy();
-
-        Container.BindInterfacesAndSelfTo<HealthModel>()
-            .AsSingle()
-            .NonLazy();
-
-        Container.BindInterfacesAndSelfTo<PlayerController>()
-            .AsSingle()
-            .NonLazy();
-
-        Container.BindInterfacesAndSelfTo<SpaceshipController>()
-            .AsSingle()
-            .NonLazy();
-
-        Container.BindInterfacesAndSelfTo<AsteroidsController>()
             .AsSingle()
             .NonLazy();
         
@@ -72,6 +56,10 @@ public class ProjectInstaller : MonoInstaller
         Container.Bind<AsteroidsNumProvider>()
             .WithId(AsteroidSize.Medium)
             .To<MediumAsteroidsNumProvider>();
+        
+        Container.BindInterfacesAndSelfTo<AsteroidsController>()
+            .AsSingle()
+            .NonLazy();
     }
     
     private void BindSignals()

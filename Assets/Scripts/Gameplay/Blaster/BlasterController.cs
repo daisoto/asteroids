@@ -5,7 +5,7 @@ using UnityEngine;
 public class BlasterController: IDisposable
 {
     private readonly BlasterModel _model;
-    private readonly Pool<ProjectileModel> _projectilesPool;
+    private readonly IPool<ProjectileModel> _projectilesPool;
     private readonly IFactory<ProjectileBehaviour> _projectileBehavioursFactory;
     private readonly Func<Vector3> _barrelPositionProvider;
     
@@ -18,9 +18,7 @@ public class BlasterController: IDisposable
         _barrelPositionProvider = barrelPositionProvider;
         _projectileBehavioursFactory = projectileBehavioursFactory;
         
-        _projectilesPool = new ProjectilesPool(
-            new Factory<ProjectileModel>(GetProjectileModel)
-                .SetOnCreated(CreateProjectileBehaviour));
+        _projectilesPool = GetProjectilesPool();
         _disposablesContainer = new DisposablesContainer();
     }
     
@@ -42,6 +40,13 @@ public class BlasterController: IDisposable
         var uniformSpeedProvider = new UniformSpeedProvider(_model.Speed);
         
         return new ProjectileModel(uniformSpeedProvider);
+    }
+    
+    private IPool<ProjectileModel> GetProjectilesPool()
+    {
+        return new ProjectilesPool(
+            new Factory<ProjectileModel>(GetProjectileModel)
+                .SetOnCreated(CreateProjectileBehaviour));
     }
     
     private void CreateProjectileBehaviour(ProjectileModel model)

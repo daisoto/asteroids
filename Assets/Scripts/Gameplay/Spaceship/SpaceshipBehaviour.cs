@@ -12,6 +12,9 @@ public class SpaceshipBehaviour: MonoBehaviour
     [SerializeField]
     private CharacterController _characterController;
     
+    [SerializeField]
+    private Transform _barrel;
+    
     private Action<int> _onDamage;
 
     private void OnCollisionEnter(Collision other)
@@ -34,6 +37,8 @@ public class SpaceshipBehaviour: MonoBehaviour
         return this;
     }
     
+    public Vector3 GetBarrelPosition() => _barrel.position;
+
     public void Rotate(Vector2 position)
     {
         var targetPosition = _camera.ScreenToWorldPoint(position);
