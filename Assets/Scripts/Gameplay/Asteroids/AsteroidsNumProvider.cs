@@ -7,5 +7,5 @@
         _maxLevel = maxLevel;
     }
     
-    public abstract  int GetNum(int level, int maxNum);
+    public abstract int GetNum(int level, int maxNum);
 }

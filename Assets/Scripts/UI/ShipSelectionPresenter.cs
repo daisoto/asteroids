@@ -27,6 +27,10 @@ public class ShipSelectionPresenter: IInitializable
             .ToList(), SetSelected, _maxValue);
     }
     
+    public void Show() => _view.Show();
+    
+    public void Close() => _view.Close();
+    
     public ShipSelectionPresenter SetOnContinue(Action onContinue)
     {
         _onContinue = onContinue;

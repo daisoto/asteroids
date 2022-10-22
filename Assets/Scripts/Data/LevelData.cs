@@ -1,5 +1,7 @@
-﻿public struct LevelData
+﻿using System.Collections.Generic;
+
+public struct LevelData
 {
-    public int LevelNum { get; set;}
-    public int MaxAsteroids { get; set; }
+    public Dictionary<AsteroidSize, int> AsteroidsNum { get; set; }
+    public bool IsFinished { get; set; }
 }

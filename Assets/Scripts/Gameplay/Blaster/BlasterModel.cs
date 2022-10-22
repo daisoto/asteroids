@@ -5,16 +5,16 @@ public class BlasterModel: ITickable
 {
     public int Damage { get; }
     
-    public float Speed { get; }
+    public float ProjectileSpeed { get; }
     
     private readonly float _firePeriod;
     
     private float _timer;
     
-    public BlasterModel(int damage, float speed, int fireRate)
+    public BlasterModel(int damage, int fireRate, float projectileSpeed)
     {
         Damage = damage;
-        Speed = speed;
+        ProjectileSpeed = projectileSpeed;
         _firePeriod = 1f / fireRate;
     }
     

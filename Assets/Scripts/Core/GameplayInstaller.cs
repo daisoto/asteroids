@@ -8,34 +8,57 @@ public class GameplayInstaller : MonoInstaller
     
     [Inject]
     private ShipSelectionPresenter _shipSelectionPresenter;
+    
+    [Inject]
+    private SpaceshipDataManager _spaceshipDataManager;
 
     public override void InstallBindings()
     {
         Container.BindInstance(_camera);
         
-        Container.BindInstance(GetSpaceshipModel());
-        
-        Container.BindInterfacesAndSelfTo<SpaceshipController>()
-            .AsSingle()
-            .NonLazy();
-
-        Container.BindInterfacesAndSelfTo<BlasterController>()
-            .AsSingle()
-            .NonLazy();
+        BindSpaceship();
 
         Container.BindInterfacesAndSelfTo<PlayerController>()
             .AsSingle()
             .NonLazy();
     }
     
+    private void BindSpaceship()
+    {
+        Container.BindInstance(GetSpaceshipModel());
+        
+        Container.BindInterfacesAndSelfTo<SpaceshipController>()
+            .AsSingle()
+            .NonLazy();
+        
+        Container.BindInstance(GetBlasterModel());
+
+        Container.BindInterfacesAndSelfTo<BlasterController>()
+            .AsSingle()
+            .NonLazy();
+    }
+    
     private SpaceshipModel GetSpaceshipModel()
     {
-        var data  = _shipSelectionPresenter.SelectedData;
+        var data  = GetCurrentSpaceshipData();
         
         var healthModel = new HealthModel(data.MaxHealth);
         var speedProvider = new UniformSpeedProvider(data.Speed);
         
         return new SpaceshipModel(
             healthModel, speedProvider, data.Texture);
+    }
+    
+    private BlasterModel GetBlasterModel()
+    {
+        var data  = GetCurrentSpaceshipData();
+        
+        return new BlasterModel(data.Damage, data.FireRate, data.ProjectileSpeed);
+    }
+    
+    private SpaceshipData GetCurrentSpaceshipData()
+    {
+        return _spaceshipDataManager.TryLoad(out var data) ? 
+            data : _shipSelectionPresenter.SelectedData;
     }
 }

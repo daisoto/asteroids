@@ -9,6 +9,6 @@ public class SmallAsteroidsNumProvider: AsteroidsNumProvider
         var minNum = Mathf.RoundToInt(
             (_maxLevel - level + 1f) / (_maxLevel + 1f) * maxNum);
         
-        return RandomUtility.GetInt(minNum, maxNum);
+        return RandomUtils.GetInt(minNum, maxNum);
     }
 }

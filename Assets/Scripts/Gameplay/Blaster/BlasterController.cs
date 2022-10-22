@@ -7,15 +7,15 @@ public class BlasterController: IDisposable
     private readonly BlasterModel _model;
     private readonly IPool<ProjectileModel> _projectilesPool;
     private readonly IFactory<ProjectileBehaviour> _projectileBehavioursFactory;
-    private readonly Func<Vector3> _barrelPositionProvider;
+    private readonly SpaceshipController _spaceshipController;
     
     private readonly DisposablesContainer _disposablesContainer;
     
-    public BlasterController(BlasterModel model, Func<Vector3> barrelPositionProvider,
+    public BlasterController(BlasterModel model, SpaceshipController spaceshipController,
         IFactory<ProjectileBehaviour> projectileBehavioursFactory)
     {
         _model = model;
-        _barrelPositionProvider = barrelPositionProvider;
+        _spaceshipController = spaceshipController;
         _projectileBehavioursFactory = projectileBehavioursFactory;
         
         _projectilesPool = GetProjectilesPool();
@@ -30,14 +30,14 @@ public class BlasterController: IDisposable
         {
             var projectile = _projectilesPool.Get();
             projectile.SetPosition
-                .Execute(_barrelPositionProvider.Invoke());
+                .Execute(_spaceshipController.GetBarrelPosition());
             projectile.Initialize();
         }
     }
     
     private ProjectileModel GetProjectileModel()
     {
-        var uniformSpeedProvider = new UniformSpeedProvider(_model.Speed);
+        var uniformSpeedProvider = new UniformSpeedProvider(_model.ProjectileSpeed);
         
         return new ProjectileModel(uniformSpeedProvider);
     }

@@ -18,13 +18,13 @@ public class ProjectInstaller : MonoInstaller
 
     public override void InstallBindings()
     {
-        BindSignals();
-        
-        Container.BindInstance(new SpaceshipData());
-        
         Container.BindInstance(_spaceshipsData);
         
         Container.BindInstance(_projectileBehaviourPrefab);
+        
+        BindSignals();
+        
+        BindAsteroids();
         
         Container.BindInterfacesAndSelfTo<ShipSelectionPresenter>()
             .AsSingle()
@@ -34,7 +34,17 @@ public class ProjectInstaller : MonoInstaller
             .AsSingle()
             .NonLazy();
         
-        BindAsteroids();
+        Container.BindInterfacesAndSelfTo<SpaceshipDataManager>()
+            .AsSingle()
+            .NonLazy();
+        
+        Container.BindInterfacesAndSelfTo<LevelsDataManager>()
+            .AsSingle()
+            .NonLazy();
+        
+        Container.BindInterfacesAndSelfTo<LevelsController>()
+            .AsSingle()
+            .NonLazy();
 
         SignalBusInstaller.Install(Container);
     }
@@ -51,11 +61,11 @@ public class ProjectInstaller : MonoInstaller
         
         Container.Bind<AsteroidsNumProvider>()
             .WithId(AsteroidSize.Small)
-            .To<SmallAsteroidsNumProvider>();
+            .FromInstance(new SmallAsteroidsNumProvider(_asteroidsData.MaxLevel));
 
         Container.Bind<AsteroidsNumProvider>()
             .WithId(AsteroidSize.Medium)
-            .To<MediumAsteroidsNumProvider>();
+            .FromInstance(new MediumAsteroidsNumProvider(_asteroidsData.MaxLevel));
         
         Container.BindInterfacesAndSelfTo<AsteroidsController>()
             .AsSingle()

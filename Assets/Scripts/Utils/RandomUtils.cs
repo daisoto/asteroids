@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-public static class RandomUtility
+public static class RandomUtils
 {
     private static readonly System.Random R = new System.Random(42);
     

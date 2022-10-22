@@ -16,5 +16,5 @@ public class RandomSpeedModel: ISpeedProvider
         _speed = new ReactiveProperty<float>();
     }
 
-    public void Initialize() => _speed.Value = RandomUtility.GetFloat(_minSpeed, _maxSpeed);
+    public void Initialize() => _speed.Value = RandomUtils.GetFloat(_minSpeed, _maxSpeed);
 }

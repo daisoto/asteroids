@@ -19,7 +19,7 @@ public class SpaceshipsData : ScriptableObject
 }
 
 [Serializable]
-public class SpaceshipData
+public struct SpaceshipData
 {
     [SerializeField]
     private string _title;

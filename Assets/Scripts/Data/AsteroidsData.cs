@@ -4,12 +4,25 @@ using UnityEngine;
 
 [CreateAssetMenu(fileName = "New AsteroidsData", menuName = "Asteroids data")]
 public class AsteroidsData: ScriptableObject, 
-    IFactory<AsteroidBehaviour, AsteroidSize>
+    IFactory<AsteroidBehaviour, AsteroidSize>,
+    ITotalAsteroidsProvider
 {
     [SerializeField]
     private AsteroidData[] _asteroidsData;
     
     public IList<AsteroidData> Data => _asteroidsData;
+    
+    [SerializeField]
+    private int _maxLevel;
+    public int MaxLevel => _maxLevel;
+    
+    [SerializeField]
+    private int _minAsteroidsNum;
+    
+    [SerializeField]
+    private int _maxAsteroidsNum;
+    
+    private int _minLevel => 1;
 
     public AsteroidBehaviour Get(AsteroidSize size)
     {
@@ -25,6 +38,19 @@ public class AsteroidsData: ScriptableObject,
     public IFactory<AsteroidBehaviour, AsteroidSize> 
         SetOnCreated(Action<AsteroidBehaviour, AsteroidSize> onCreated) 
     { return this; }
+
+    public int Get(int level) 
+    {
+        var lerp = Mathf.RoundToInt(
+            Mathf.Lerp(_minAsteroidsNum, _maxAsteroidsNum, 
+                (float)level / _maxLevel));
+        var delta = (_maxAsteroidsNum - _minAsteroidsNum) / 2;
+        var left = lerp - delta; 
+        var right = lerp + delta;
+        var random = RandomUtils.GetInt(left, right);
+        
+        return Mathf.Clamp(random, _minAsteroidsNum, _maxAsteroidsNum);
+    }
 }
 
 [Serializable]
