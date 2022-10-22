@@ -1,24 +1,20 @@
 ﻿using System;
 using UnityEngine;
-using Zenject;
 
-public class Projectile: MonoBehaviour
+public class ProjectileBehaviour: PositionableBehaviour
 {
-    [SerializeField]
-    private Rigidbody _rigidbody;
-    
     private Action _onCollision;
     
-    public int Damage { get; set; }
+    public int Damage { get; private set; }
     
-    public Projectile AddForce(Vector3 force)
+    public ProjectileBehaviour SetDamage(int damage)
     {
-        _rigidbody.AddForce(force);
+        Damage = damage;
         
         return this;
     }
     
-    public Projectile SetOnCollision(Action onCollision)
+    public ProjectileBehaviour SetOnCollision(Action onCollision)
     {
         _onCollision = onCollision;
         
@@ -30,6 +26,4 @@ public class Projectile: MonoBehaviour
         if (other.gameObject.TryGetComponent(out AsteroidBehaviour asteroid))
             _onCollision?.Invoke();
     }
-    
-    public class Pool : MonoMemoryPool<Projectile> { }
 }

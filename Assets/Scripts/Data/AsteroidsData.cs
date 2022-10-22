@@ -22,7 +22,9 @@ public class AsteroidsData: ScriptableObject,
         return behaviour;
     }
 
-    public void SetOnCreated(Action<AsteroidBehaviour, AsteroidSize> onCreated) { }
+    public IFactory<AsteroidBehaviour, AsteroidSize> 
+        SetOnCreated(Action<AsteroidBehaviour, AsteroidSize> onCreated) 
+    { return this; }
 }
 
 [Serializable]

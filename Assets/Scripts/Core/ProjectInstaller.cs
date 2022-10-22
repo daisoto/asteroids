@@ -14,7 +14,7 @@ public class ProjectInstaller : MonoInstaller
     private AsteroidsData _asteroidsData;
     
     [SerializeField]
-    private Projectile _projectilePrefab;
+    private ProjectileBehaviour _projectileBehaviourPrefab;
 
     public override void InstallBindings()
     {
@@ -49,9 +49,6 @@ public class ProjectInstaller : MonoInstaller
         Container.BindInterfacesAndSelfTo<AsteroidsController>()
             .AsSingle()
             .NonLazy();
-        
-        Container.BindMemoryPool<Projectile, Projectile.Pool>()
-            .FromComponentInNewPrefab(_projectilePrefab);
         
         BindAsteroids();
 

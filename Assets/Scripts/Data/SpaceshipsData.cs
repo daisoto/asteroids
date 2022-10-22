@@ -8,6 +8,12 @@ public class SpaceshipsData : ScriptableObject
     [SerializeField]
     private SpaceshipData[] _spaceShipsData;
     public IList<SpaceshipData> Data => _spaceShipsData;
+    
+    [SerializeField]
+    private ProjectileBehaviour _projectileBehaviourPrefab;
+
+    public ProjectileBehaviour GetProjectileBehaviour() => 
+        Instantiate(_projectileBehaviourPrefab);
 }
 
 [Serializable]
@@ -37,4 +43,8 @@ public struct SpaceshipData
     [SerializeField]
     private int _maxHealth;
     public int MaxHealth => _maxHealth;
+    
+    [SerializeField]
+    private int _projectileSpeed;
+    public int ProjectileSpeed => _projectileSpeed; 
 }
