@@ -1,4 +1,4 @@
-﻿public class LevelData
+﻿public struct LevelData
 {
     public int LevelNum { get; set;}
     public int MaxAsteroids { get; set; }
