@@ -75,6 +75,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _spaceshipsData: {fileID: 11400000, guid: c0f81f7a8d6bf4645afbfecfc523d20d, type: 2}
   _asteroidsData: {fileID: 11400000, guid: 0631cd3d759c9f6438e573dac31e1db6, type: 2}
+  _levelsData: {fileID: 11400000, guid: 719ea577d07760a458e652a404955778, type: 2}
   _projectileBehaviourPrefab: {fileID: 5620858639453095050, guid: 165e12f049a3f2b4c9e4d7ada7b47beb, type: 3}
 --- !u!114 &5338326157814179532
 MonoBehaviour:
