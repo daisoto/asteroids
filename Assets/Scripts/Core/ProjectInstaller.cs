@@ -14,21 +14,21 @@ public class ProjectInstaller : MonoInstaller
     private AsteroidsData _asteroidsData;
     
     [SerializeField]
+    private LevelsData _levelsData;
+    
+    [SerializeField]
     private ProjectileBehaviour _projectileBehaviourPrefab;
 
     public override void InstallBindings()
     {
         Container.BindInstance(_spaceshipsData);
-        
         Container.BindInstance(_projectileBehaviourPrefab);
+        Container.BindInstance(_levelsData);
         
         BindSignals();
-        
+        BindLevels();
         BindAsteroids();
-        
-        Container.BindInterfacesAndSelfTo<ShipSelectionPresenter>()
-            .AsSingle()
-            .NonLazy();
+        BindUI();
         
         Container.BindInterfacesAndSelfTo<InputManager>()
             .AsSingle()
@@ -37,7 +37,29 @@ public class ProjectInstaller : MonoInstaller
         Container.BindInterfacesAndSelfTo<SpaceshipDataManager>()
             .AsSingle()
             .NonLazy();
+    }
+    
+    private void BindUI()
+    {
+        Container.BindInterfacesAndSelfTo<MainMenuPresenter>()
+            .AsSingle()
+            .NonLazy();
         
+        Container.BindInterfacesAndSelfTo<ShipSelectionPresenter>()
+            .AsSingle()
+            .NonLazy();
+        
+        Container.BindInterfacesAndSelfTo<LevelSelectionPresenter>()
+            .AsSingle()
+            .NonLazy();
+        
+        Container.BindInterfacesAndSelfTo<UIManager>()
+            .AsSingle()
+            .NonLazy();
+    }
+    
+    private void BindLevels()
+    {
         Container.BindInterfacesAndSelfTo<LevelsDataManager>()
             .AsSingle()
             .NonLazy();
@@ -46,7 +68,9 @@ public class ProjectInstaller : MonoInstaller
             .AsSingle()
             .NonLazy();
 
-        SignalBusInstaller.Install(Container);
+        Container.BindInterfacesAndSelfTo<LevelController>()
+            .AsSingle()
+            .NonLazy();
     }
     
     private void BindAsteroids()
@@ -61,13 +85,17 @@ public class ProjectInstaller : MonoInstaller
         
         Container.Bind<AsteroidsNumProvider>()
             .WithId(AsteroidSize.Small)
-            .FromInstance(new SmallAsteroidsNumProvider(_asteroidsData.MaxLevel));
+            .To<SmallAsteroidsNumProvider>();
 
         Container.Bind<AsteroidsNumProvider>()
             .WithId(AsteroidSize.Medium)
-            .FromInstance(new MediumAsteroidsNumProvider(_asteroidsData.MaxLevel));
+            .To<MediumAsteroidsNumProvider>();
         
         Container.BindInterfacesAndSelfTo<AsteroidsController>()
+            .AsSingle()
+            .NonLazy();
+        
+        Container.BindInterfacesAndSelfTo<TotalAsteroidsProvider>()
             .AsSingle()
             .NonLazy();
     }
@@ -82,5 +110,7 @@ public class ProjectInstaller : MonoInstaller
                         
         foreach (var type in types) 
             Container.DeclareSignal(type);
+
+        SignalBusInstaller.Install(Container);
     }
 }

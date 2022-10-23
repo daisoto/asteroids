@@ -2,7 +2,9 @@
 
 public class SmallAsteroidsNumProvider: AsteroidsNumProvider
 {
-    public SmallAsteroidsNumProvider(int maxLevel) : base(maxLevel) { }
+    public SmallAsteroidsNumProvider(
+        ILevelsViewDataProvider levelsViewDataProvider) : 
+        base(levelsViewDataProvider) { }
     
     public override int GetNum(int level, int maxNum)
     {

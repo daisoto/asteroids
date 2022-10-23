@@ -1,10 +1,11 @@
 ﻿public abstract class AsteroidsNumProvider
 {
-    protected readonly int _maxLevel;
-    
-    public AsteroidsNumProvider(int maxLevel)
+    private readonly ILevelsViewDataProvider _levelsViewDataProvider;
+    protected int _maxLevel => _levelsViewDataProvider.MaxLevel;
+
+    protected AsteroidsNumProvider(ILevelsViewDataProvider levelsViewDataProvider)
     {
-        _maxLevel = maxLevel;
+        _levelsViewDataProvider = levelsViewDataProvider;
     }
     
     public abstract int GetNum(int level, int maxNum);

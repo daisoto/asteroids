@@ -1,76 +1,60 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
 using Zenject;
 
-public class LevelsController: IInitializable, IDisposable
+public class LevelsController
 {
-    private readonly Dictionary<AsteroidSize, AsteroidsNumProvider> _asteroidsNumProviders;
-    private readonly AsteroidsController _asteroidsController;
+    private readonly Dictionary<AsteroidSize, AsteroidsNumProvider> 
+        _asteroidsNumProviders;
+    private readonly LevelController _levelController;
     private readonly LevelsDataManager _levelsDataManager;
     private readonly ITotalAsteroidsProvider _totalAsteroidsProvider;
-    private readonly Camera _camera;
-    private readonly SignalBus _signalBus;
     
-    private readonly List<LevelData> _levels;
-    
-    public LevelsController(AsteroidsController asteroidsController, Camera camera,
+    private readonly List<LevelData> _levelsData;
+    public IList<LevelData> LevelsData => _levelsData;
+
+    public LevelsController(LevelController levelController,
         [Inject(Id = AsteroidSize.Small)]
         AsteroidsNumProvider smallAsteroidNumProvider, 
         [Inject(Id = AsteroidSize.Medium)]
         AsteroidsNumProvider mediumAsteroidNumProvider, 
         LevelsDataManager levelsDataManager,
-        ITotalAsteroidsProvider totalAsteroidsProvider,
-        SignalBus signalBus)
+        ITotalAsteroidsProvider totalAsteroidsProvider)
     {
-        _asteroidsController = asteroidsController;
-        _totalAsteroidsProvider = totalAsteroidsProvider;
+        _levelController = levelController;
         _levelsDataManager = levelsDataManager;
-        
-        _levels = 
+        _totalAsteroidsProvider = totalAsteroidsProvider;
+
+        _levelsData = 
             levelsDataManager.TryLoad(out var levelsData) ? 
             levelsData : new List<LevelData>();
         
-        _camera = camera;
-        
-        _asteroidsNumProviders = new Dictionary<AsteroidSize, AsteroidsNumProvider>
+        _asteroidsNumProviders = 
+            new Dictionary<AsteroidSize, AsteroidsNumProvider>
         {
             {AsteroidSize.Small, smallAsteroidNumProvider},
             {AsteroidSize.Medium, mediumAsteroidNumProvider}
         };
-
-        _signalBus = signalBus;
-    }
-
-    public void Initialize()
-    {
-        _signalBus.Subscribe<AsteroidCollapseSignal>(ProcessCollapse);
     }
     
-    public void Dispose()
+    public void StartLevel(int level, Action goBack)
     {
-        _signalBus.Unsubscribe<AsteroidCollapseSignal>(ProcessCollapse);
-    }
+        var data = GetLevelData(level);
+        _levelController
+            .SetOnLevelFinished(FinishLevel)// TODO Return to level select
+            .StartLevel(data, goBack); // TODO Return to level select 
     
-    public void CreateAsteroids(int level)
-    {
-        var data  = GetLevelData(level);
-        var sizes = EnumUtils.GetValues<AsteroidSize>();
-        foreach (var size in sizes)
+        void FinishLevel()
         {
-            var num = data.AsteroidsNum[size];
-            
-            for (int i = 0; i < num; i++)
-                _asteroidsController
-                    .CreateAsteroid(size)
-                    .SetPosition.Execute(GetRandomPosition());
+            _levelsData[level].IsFinished = true;
+            goBack.Invoke();
         }
     }
-    
+
     private LevelData GetLevelData(int level)
     {
-        if (_levels.Count <= level)
-            return _levels[level];
+        if (_levelsData.Count <= level)
+            return _levelsData[level];
         
         var totalNum = _totalAsteroidsProvider.Get(level);
         var sizes = EnumUtils.GetValues<AsteroidSize>();
@@ -83,10 +67,10 @@ public class LevelsController: IInitializable, IDisposable
             asteroidsNum.Add(size, num);
         }
         
-        var levelData = new LevelData { AsteroidsNum = asteroidsNum };
-        _levels.Add(levelData);
+        var levelData = new LevelData(level, asteroidsNum);
+        _levelsData.Add(levelData);
         
-        _levelsDataManager.Save(_levels);
+        _levelsDataManager.Save(_levelsData);
 
         return levelData;
     }
@@ -96,38 +80,5 @@ public class LevelsController: IInitializable, IDisposable
         return _asteroidsNumProviders.ContainsKey(size) ? 
             _asteroidsNumProviders[size].GetNum(level, asteroidsLeft) 
             : asteroidsLeft;
-    }
-
-    private void ProcessCollapse(AsteroidCollapseSignal signal)
-    {
-        switch (signal.Size)
-        {
-            case AsteroidSize.Small:
-                // todo?
-            break;
-            case AsteroidSize.Medium:
-                _asteroidsController
-                    .CreateAsteroid(AsteroidSize.Small)
-                    .SetPosition.Execute(signal.Position);
-                _asteroidsController
-                    .CreateAsteroid(AsteroidSize.Small)
-                    .SetPosition.Execute(signal.Position);
-            break;
-            case AsteroidSize.Big:
-                _asteroidsController
-                    .CreateAsteroid(AsteroidSize.Medium)
-                    .SetPosition.Execute(signal.Position);
-                _asteroidsController
-                    .CreateAsteroid(AsteroidSize.Medium)
-                    .SetPosition.Execute(signal.Position);
-            break;
-        }
-    }
-    
-    private Vector2 GetRandomPosition()
-    {
-        var x = RandomUtils.GetFloat(0, Screen.width);
-        var y = RandomUtils.GetFloat(0, Screen.height);
-        return _camera.ScreenToWorldPoint(new Vector2(x, y));
     }
 }

@@ -1,7 +1,16 @@
 ﻿using System.Collections.Generic;
 
-public struct LevelData
+public class LevelData
 {
-    public Dictionary<AsteroidSize, int> AsteroidsNum { get; set; }
+    public int Level { get; }
     public bool IsFinished { get; set; }
+    public Dictionary<AsteroidSize, int> AsteroidsNum { get; }
+    
+    public LevelData(int level, Dictionary<AsteroidSize, int> asteroidsNum)
+    {
+        Level = level;
+        AsteroidsNum = asteroidsNum;
+            
+        IsFinished = false;
+    }
 }

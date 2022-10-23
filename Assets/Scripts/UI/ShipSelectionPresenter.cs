@@ -1,41 +1,29 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using Zenject;
 
-public class ShipSelectionPresenter: IInitializable
+public class ShipSelectionPresenter: Presenter<ShipSelectionView>
 {
     private readonly IList<SpaceshipData> _data; 
-    private readonly ShipSelectionView _view;
     private readonly int _maxValue;
-    
-    private Action _onContinue;
     
     public SpaceshipData SelectedData { get; private set; }
     
-    public ShipSelectionPresenter(SpaceshipsData data, ShipSelectionView view)
+    public ShipSelectionPresenter(SpaceshipsData data, 
+        ShipSelectionView view): base(view)
     {
         _data = data.Data;
         _maxValue = data.MaxValue;
-        _view = view;
     }
     
-    public void Initialize()
+    public void Initialize(Action onContinue, Action onBack)
     {
-        _view.Draw(_data
-            .Select(d => d.Title)
-            .ToList(), SetSelected, _maxValue);
-    }
-    
-    public void Show() => _view.Show();
-    
-    public void Close() => _view.Close();
-    
-    public ShipSelectionPresenter SetOnContinue(Action onContinue)
-    {
-        _onContinue = onContinue;
-        
-        return this;
+        _view
+            .SetOnContinue(onContinue)
+            .SetOnBack(onBack)
+            .Draw(_data
+                .Select(d => d.Title)
+                .ToList(), SetSelected, _maxValue);
     }
     
     private void SetSelected(int index)

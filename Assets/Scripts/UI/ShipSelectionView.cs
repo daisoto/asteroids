@@ -23,16 +23,27 @@ public class ShipSelectionView: View
     [SerializeField]
     private Renderer _renderer;
     
-    private Action _onContinue;
-    private Action _onBack;
-
-    private void Start()
+    private void OnDestroy()
     {
-        _continueButton.onClick.AddListener(_onContinue.Invoke);
-        _backButton.onClick.AddListener(_onBack.Invoke);
+        _continueButton.onClick.RemoveAllListeners();
+        _backButton.onClick.RemoveAllListeners();
+    }
+    
+    public ShipSelectionView SetOnContinue(Action onContinue)
+    {
+        _continueButton.onClick.AddListener(onContinue.Invoke);
+        
+        return this;
     }
 
-    public void Draw(IList<string> names, Action<int> onSelect, int maxChar)
+    public ShipSelectionView SetOnBack(Action onBack)
+    {
+        _backButton.onClick.AddListener(onBack.Invoke);
+        
+        return this;
+    }
+
+    public ShipSelectionView Draw(IList<string> names, Action<int> onSelect, int maxChar)
     {
         for (int i = 0; i < names.Count; i++)
         {
@@ -44,18 +55,6 @@ public class ShipSelectionView: View
         }
         
         _characteristicsView.Init(maxChar);
-    }
-    
-    public ShipSelectionView SetOnContinue(Action onContinue)
-    {
-        _onContinue = onContinue;
-        
-        return this;
-    }
-    
-    public ShipSelectionView SetOnBack(Action onBack)
-    {
-        _onBack = onBack;
         
         return this;
     }
