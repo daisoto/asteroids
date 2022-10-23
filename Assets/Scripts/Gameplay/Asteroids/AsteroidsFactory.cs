@@ -1,4 +1,8 @@
-﻿public class AsteroidsFactory: Factory<AsteroidModel, AsteroidSize>
+﻿using Data;
+
+namespace Gameplay
+{
+public class AsteroidsFactory: Factory<AsteroidModel, AsteroidSize>
 {
     private readonly AsteroidsData _data;
     public AsteroidsFactory(AsteroidsData data)
@@ -24,4 +28,5 @@
         
         return new AsteroidModel(healthModel, speedModel, data.Damage);
     }
+}
 }

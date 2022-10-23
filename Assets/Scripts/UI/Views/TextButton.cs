@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
+namespace UI
+{
 public class TextButton: Button
 {
     [SerializeField]
@@ -22,4 +24,5 @@ public class TextButton: Button
         
         return this;
     }
+}
 }

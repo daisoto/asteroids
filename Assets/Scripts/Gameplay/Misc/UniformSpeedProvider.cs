@@ -1,5 +1,7 @@
 ﻿using UniRx;
 
+namespace Gameplay
+{
 public class UniformSpeedProvider: ISpeedProvider
 {
     public IReadOnlyReactiveProperty<float> Speed => _speed;
@@ -17,5 +19,5 @@ public class UniformSpeedProvider: ISpeedProvider
     {
         _speed.SetValueAndForceNotify(_speedInternal);
     }
-
+}
 }

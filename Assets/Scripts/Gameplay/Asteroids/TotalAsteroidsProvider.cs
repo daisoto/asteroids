@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
+using Data;
 
+namespace Gameplay
+{
 public class TotalAsteroidsProvider: ITotalAsteroidsProvider
 {
     private readonly AsteroidsData _asteroidsData;
@@ -28,4 +31,5 @@ public class TotalAsteroidsProvider: ITotalAsteroidsProvider
         
         return Mathf.Clamp(random, _minAsteroidsNum, _maxAsteroidsNum);
     }
+}
 }

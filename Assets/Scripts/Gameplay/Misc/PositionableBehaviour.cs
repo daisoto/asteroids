@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 
+namespace Gameplay
+{
 public class PositionableBehaviour: MonoBehaviour
 {
     [SerializeField]
@@ -16,4 +18,5 @@ public class PositionableBehaviour: MonoBehaviour
     public void SetSpeed(Vector3 speed) => _rigidbody.velocity = speed;
     
     public void AddForce(Vector3 force) =>  _rigidbody.AddForce(force);
+}
 }

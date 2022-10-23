@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+namespace UI
+{
 public class LevelSelectionView: View
 {
     [SerializeField]
@@ -60,4 +62,5 @@ public class LevelSelectionView: View
         
         return newButton;
     }
+}
 }

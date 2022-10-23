@@ -1,7 +1,10 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using Data; 
 
+namespace UI
+{
 public class ShipSelectionPresenter: Presenter<ShipSelectionView>
 {
     private readonly IList<SpaceshipData> _data; 
@@ -36,4 +39,5 @@ public class ShipSelectionPresenter: Presenter<ShipSelectionView>
                 SelectedData.FireRate, 
                 SelectedData.Speed);
     }
+}
 }

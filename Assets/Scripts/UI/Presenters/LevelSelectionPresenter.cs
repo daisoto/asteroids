@@ -1,7 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Data;
+using Gameplay;
 
+namespace UI
+{
 public class LevelSelectionPresenter: Presenter<LevelSelectionView>
 {
     private readonly ILevelsViewDataProvider _levelsViewDataProvider;
@@ -60,4 +64,5 @@ public class LevelSelectionPresenter: Presenter<LevelSelectionView>
         
         return viewModels;
     }
+}
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
+namespace UI
+{
 public class View: MonoBehaviour
 {
     [SerializeField]
@@ -34,4 +36,5 @@ public class View: MonoBehaviour
         _root.SetActive(false); 
         _onClose?.Invoke();
     }
+}
 }

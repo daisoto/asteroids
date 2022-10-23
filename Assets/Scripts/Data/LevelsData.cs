@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 
+namespace Data
+{
 [CreateAssetMenu(fileName = "New LevelsData", menuName = "Levels data")]
 public class LevelsData: ScriptableObject, ILevelsViewDataProvider
 {
@@ -18,4 +20,5 @@ public class LevelsData: ScriptableObject, ILevelsViewDataProvider
     [SerializeField]
     private Color _finishedColor;
     public Color FinishedColor => _finishedColor;
+}
 }

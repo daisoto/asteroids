@@ -1,6 +1,8 @@
 ﻿using UniRx;
 using UnityEngine;
 
+namespace Gameplay
+{
 public class SpaceshipModel
 {
     private readonly HealthModel _healthModel;
@@ -23,4 +25,5 @@ public class SpaceshipModel
     
     public void DecreaseHealth(int damage) => 
         _healthModel.DecreaseHealth(damage);
+}
 }

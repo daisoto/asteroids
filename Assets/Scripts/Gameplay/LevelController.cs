@@ -1,12 +1,14 @@
 ﻿using System;
 using UnityEngine;
 using Zenject;
+using Data;
 
+namespace Gameplay
+{
 public class LevelController: IInitializable, IDisposable
 {
     private readonly AsteroidsController _asteroidsController;
     private readonly PlayerController _playerController;
-    private readonly InGameMenuView _inGameMenuView;
     private readonly Camera _camera;
     private readonly SignalBus _signalBus;
     
@@ -14,12 +16,10 @@ public class LevelController: IInitializable, IDisposable
     private Action _onLevelFinished;
 
     public LevelController(AsteroidsController asteroidsController, 
-        PlayerController playerController, InGameMenuView inGameMenuView, 
-        Camera camera, SignalBus signalBus)
+        PlayerController playerController, Camera camera, SignalBus signalBus)
     {
         _asteroidsController = asteroidsController;
         _playerController = playerController;
-        _inGameMenuView = inGameMenuView;
         _camera = camera;
         _signalBus = signalBus;
     }
@@ -41,13 +41,8 @@ public class LevelController: IInitializable, IDisposable
         return this;
     }
     
-    public void StartLevel(LevelData levelData, Action onExit)
+    public void StartLevel(LevelData levelData)
     {
-        _inGameMenuView
-            .OnContinue(ResumeGame)
-            .OnExit(onExit) 
-            .OnShow(PauseGame);
-        
         _asteroidsNum = 0;
         var sizes = EnumUtils.GetValues<AsteroidSize>();
         foreach (var size in sizes)
@@ -62,6 +57,18 @@ public class LevelController: IInitializable, IDisposable
         }
         
         ResumeGame();
+    }
+    
+    public void PauseGame()
+    {
+        Time.timeScale = 0;
+        _playerController.SetActive(false);
+    }
+    
+    public void ResumeGame()
+    {
+        Time.timeScale = 1;
+        _playerController.SetActive(true);
     }
 
     private void ProcessCollapse(AsteroidCollapseSignal signal)
@@ -97,18 +104,6 @@ public class LevelController: IInitializable, IDisposable
         }
     }
     
-    private void PauseGame()
-    {
-        Time.timeScale = 0;
-        _playerController.SetActive(false);
-    }
-    
-    private void ResumeGame()
-    {
-        Time.timeScale = 1;
-        _playerController.SetActive(true);
-    }
-    
     private Vector2 GetRandomPosition()
     {
         var x = RandomUtils.GetFloat(0, Screen.width);
@@ -124,4 +119,5 @@ public class LevelController: IInitializable, IDisposable
             _onLevelFinished?.Invoke();
         }
     }
+}
 }

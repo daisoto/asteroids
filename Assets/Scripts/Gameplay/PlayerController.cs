@@ -1,7 +1,10 @@
 using System;
 using UniRx;
 using UnityEngine;
+using Core;
 
+namespace Gameplay
+{
 public class PlayerController: IDisposable 
 {
     private readonly InputManager _inputManager;
@@ -48,4 +51,5 @@ public class PlayerController: IDisposable
                 _blasterController.TryToFire();
         });
     }
+}
 }

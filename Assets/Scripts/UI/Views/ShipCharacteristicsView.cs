@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 
+namespace UI
+{
 public class ShipCharacteristicsView: View
 {
     [SerializeField]
@@ -23,4 +25,5 @@ public class ShipCharacteristicsView: View
     public void SetDamage(int num) => _damageBarView.SetCells(num);
     public void SetFireRate(int num) => _fireRateBarView.SetCells(num);
     public void SetSpeed(int num) => _speedBarView.SetCells(num);
+}
 }

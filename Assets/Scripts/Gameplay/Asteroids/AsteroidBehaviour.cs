@@ -1,6 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
+namespace Gameplay
+{
 public class AsteroidBehaviour: PositionableBehaviour
 {
     public int Damage { get; private set;}
@@ -26,4 +28,5 @@ public class AsteroidBehaviour: PositionableBehaviour
         
         return this;
     }
+}
 }

@@ -1,4 +1,8 @@
-﻿public abstract class AsteroidsNumProvider
+﻿using Data;
+
+namespace Gameplay
+{
+public abstract class AsteroidsNumProvider
 {
     private readonly ILevelsViewDataProvider _levelsViewDataProvider;
     protected int _maxLevel => _levelsViewDataProvider.MaxLevel;
@@ -9,4 +13,5 @@
     }
     
     public abstract int GetNum(int level, int maxNum);
+}
 }

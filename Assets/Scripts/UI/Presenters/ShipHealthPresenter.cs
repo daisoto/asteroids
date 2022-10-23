@@ -1,7 +1,10 @@
 ﻿using System;
 using UniRx;
 using Zenject;
+using Gameplay;
 
+namespace UI
+{
 public class ShipHealthPresenter: IInitializable, IDisposable
 {
     private readonly SpaceshipModel _model;
@@ -25,4 +28,5 @@ public class ShipHealthPresenter: IInitializable, IDisposable
     {
         _disposable.Dispose();
     }
+}
 }

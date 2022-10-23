@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
+using Data;
 
+namespace Gameplay
+{
 public class MediumAsteroidsNumProvider: AsteroidsNumProvider
 {
     public MediumAsteroidsNumProvider(
@@ -13,4 +16,5 @@ public class MediumAsteroidsNumProvider: AsteroidsNumProvider
         
         return RandomUtils.GetInt(minNum, maxNum);
     }
+}
 }

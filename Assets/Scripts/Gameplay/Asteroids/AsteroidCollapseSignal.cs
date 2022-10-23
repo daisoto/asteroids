@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 
+namespace Gameplay
+{
 public readonly struct AsteroidCollapseSignal: ISignal
 {
     public AsteroidSize Size { get; }
@@ -10,4 +12,5 @@ public readonly struct AsteroidCollapseSignal: ISignal
         Size = size;
         Position = position;
     }
+}
 }

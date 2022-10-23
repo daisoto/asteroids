@@ -2,6 +2,8 @@
 using UnityEngine;
 using Zenject;
 
+namespace Gameplay
+{
 public class ProjectileModel: IInitializable
 {
     private readonly PositionableModel _positionableModel;
@@ -25,4 +27,5 @@ public class ProjectileModel: IInitializable
     }
     
     public void Deactivate() => _positionableModel.Deactivate();
+}
 }

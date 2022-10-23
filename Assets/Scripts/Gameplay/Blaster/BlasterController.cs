@@ -2,6 +2,8 @@
 using UniRx;
 using UnityEngine;
 
+namespace Gameplay
+{
 public class BlasterController: IDisposable
 {
     private readonly BlasterModel _model;
@@ -78,4 +80,5 @@ public class BlasterController: IDisposable
                 behaviour.SetSpeed(Vector3.forward * speed);
             }));
     }
+}
 }

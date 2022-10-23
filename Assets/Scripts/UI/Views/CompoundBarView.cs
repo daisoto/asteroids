@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+namespace UI
+{
 public class CompoundBarView: View
 {
     [SerializeField]
@@ -36,4 +38,5 @@ public class CompoundBarView: View
         for (int i = 0; i < count; i++)
             _cells[i].SetActive(i <= num);
     }
+}
 }

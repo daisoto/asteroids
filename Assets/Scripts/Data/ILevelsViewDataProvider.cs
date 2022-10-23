@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 
+namespace Data
+{
 public interface ILevelsViewDataProvider
 {
     int MaxLevel { get; }
@@ -9,4 +11,5 @@ public interface ILevelsViewDataProvider
     Color ClosedColor { get; }
     
     Color FinishedColor { get; }
+}
 }

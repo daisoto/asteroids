@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
+namespace Gameplay
+{
 public class AsteroidsController: IDisposable
 {
     private readonly Dictionary<AsteroidSize, AsteroidsPool> _pools;
@@ -89,4 +91,5 @@ public class AsteroidsController: IDisposable
     private AsteroidModel GetMediumModel() => _modelsFactory.Get(AsteroidSize.Medium);
     private AsteroidModel GetBigModel() => _modelsFactory.Get(AsteroidSize.Big);
     
+}
 }

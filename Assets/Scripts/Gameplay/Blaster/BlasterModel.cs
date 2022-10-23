@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using Zenject;
 
+namespace Gameplay
+{
 public class BlasterModel: ITickable
 {
     public int Damage { get; }
@@ -31,4 +33,5 @@ public class BlasterModel: ITickable
     {
         _timer += Time.deltaTime;
     }
+}
 }

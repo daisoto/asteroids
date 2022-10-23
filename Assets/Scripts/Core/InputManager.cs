@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+namespace Core 
+{
 public class InputManager
 {
     public bool IsFiring { get; private set; }
@@ -67,4 +69,5 @@ public class InputManager
     {
         IsFiring = ctx.ReadValue<bool>();
     }
+}
 }

@@ -2,9 +2,14 @@ using System;
 using System.Linq;
 using UnityEngine;
 using Zenject;
+using UI;
+using Gameplay;
+using Data;
 
 public interface ISignal { }
 
+namespace Core
+{
 public class ProjectInstaller : MonoInstaller
 {
     [SerializeField]
@@ -113,4 +118,5 @@ public class ProjectInstaller : MonoInstaller
 
         SignalBusInstaller.Install(Container);
     }
+}
 }

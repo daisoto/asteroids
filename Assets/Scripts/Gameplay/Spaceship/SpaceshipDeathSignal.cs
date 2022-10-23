@@ -1,1 +1,5 @@
-﻿public readonly struct SpaceshipDeathSignal: ISignal { }
+﻿
+namespace Gameplay
+{
+public readonly struct SpaceshipDeathSignal: ISignal { }
+}

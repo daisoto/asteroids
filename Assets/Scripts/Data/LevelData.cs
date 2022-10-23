@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
+using Gameplay;
 
+namespace Data
+{
 public class LevelData
 {
     public int Level { get; }
@@ -13,4 +16,5 @@ public class LevelData
             
         IsFinished = false;
     }
+}
 }

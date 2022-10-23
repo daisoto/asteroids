@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Gameplay;
 
+namespace Data
+{
 [CreateAssetMenu(fileName = "New AsteroidsData", menuName = "Asteroids data")]
 public class AsteroidsData: ScriptableObject, 
     IFactory<AsteroidBehaviour, AsteroidSize>
@@ -64,4 +67,5 @@ public struct AsteroidData
     [SerializeField]
     private AsteroidBehaviour _prefab; 
     public AsteroidBehaviour Prefab => _prefab;
+}
 }

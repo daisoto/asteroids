@@ -1,16 +1,19 @@
 ﻿using System;
 using UnityEngine;
+using Zenject;
 
+namespace Gameplay
+{
 public class SpaceshipBehaviour: MonoBehaviour
 {
-    [SerializeField]
+    [Inject]
     private Camera _camera;
     
     [SerializeField]
     private Renderer _renderer;
     
     [SerializeField]
-    private CharacterController _characterController;
+    private Rigidbody _rigidbody;
     
     [SerializeField]
     private Transform _barrel;
@@ -49,6 +52,7 @@ public class SpaceshipBehaviour: MonoBehaviour
     
     public void Move(Vector3 motion)
     {
-        _characterController.Move(motion); 
+        _rigidbody.velocity = motion; 
     }
+}
 }

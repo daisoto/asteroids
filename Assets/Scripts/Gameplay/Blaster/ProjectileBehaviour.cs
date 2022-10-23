@@ -1,6 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
+namespace Gameplay
+{
 public class ProjectileBehaviour: PositionableBehaviour
 {
     private Action _onCollision;
@@ -26,4 +28,5 @@ public class ProjectileBehaviour: PositionableBehaviour
         if (other.gameObject.TryGetComponent(out AsteroidBehaviour asteroid))
             _onCollision?.Invoke();
     }
+}
 }

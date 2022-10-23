@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 using Zenject;
+using UI;
+using Gameplay;
+using Data;
 
 public class GameplayInstaller : MonoInstaller
 {

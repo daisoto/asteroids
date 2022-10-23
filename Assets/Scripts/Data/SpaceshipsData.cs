@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Gameplay;
 
+namespace Data
+{
 [CreateAssetMenu(fileName = "New SpaceshipsData", menuName = "Spaceships data")]
 public class SpaceshipsData : ScriptableObject
 {
@@ -49,4 +52,5 @@ public struct SpaceshipData
     [SerializeField]
     private int _projectileSpeed;
     public int ProjectileSpeed => _projectileSpeed; 
+}
 }

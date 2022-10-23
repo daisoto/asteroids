@@ -1,5 +1,7 @@
 ﻿using UniRx;
 
+namespace Gameplay
+{
 public class RandomSpeedModel: ISpeedProvider
 {
     private readonly ReactiveProperty<float> _speed;
@@ -17,4 +19,5 @@ public class RandomSpeedModel: ISpeedProvider
     }
 
     public void Initialize() => _speed.Value = RandomUtils.GetFloat(_minSpeed, _maxSpeed);
+}
 }

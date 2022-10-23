@@ -2,6 +2,8 @@
 using Newtonsoft.Json;
 using UnityEngine;
 
+namespace Data
+{
 public abstract class GameDataManager<T>
 {
     protected abstract string _fileName { get; }
@@ -33,7 +35,7 @@ public abstract class GameDataManager<T>
     {
         char separator = Path.DirectorySeparatorChar;
         
-        return $"{Application.persistentDataPath}" +
-               $"{separator}Saves{separator}{dir}";
+        return $"{Application.persistentDataPath}{separator}{dir}";
     }
+}
 }

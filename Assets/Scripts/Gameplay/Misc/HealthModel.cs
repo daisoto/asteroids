@@ -1,6 +1,8 @@
 ﻿using UniRx;
 using System;
 
+namespace Gameplay
+{
 public class HealthModel
 {
     public int MaxHealth { get; }
@@ -33,4 +35,5 @@ public class HealthModel
         else 
             _health.Value -= damage;
     }
+}
 }

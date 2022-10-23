@@ -3,6 +3,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
+namespace UI
+{
 public class ShipSelectionView: View
 {
     [SerializeField]
@@ -76,4 +78,5 @@ public class ShipSelectionView: View
         
         return this;
     }
+}
 }

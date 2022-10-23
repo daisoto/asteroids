@@ -1,5 +1,9 @@
 ﻿using System;
 using UnityEngine;
+using Data;
+
+namespace UI
+{
 public class MainMenuPresenter: Presenter<MainMenuView>
 {
     private readonly SpaceshipDataManager _spaceshipDataManager;
@@ -26,4 +30,5 @@ public class MainMenuPresenter: Presenter<MainMenuView>
     private bool CheckSave() => _spaceshipDataManager.TryLoad(out var data);
     
     private void ExitGame() => Application.Quit();
+}
 }

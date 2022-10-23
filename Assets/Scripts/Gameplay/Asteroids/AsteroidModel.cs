@@ -2,6 +2,8 @@
 using UnityEngine;
 using Zenject;
 
+namespace Gameplay
+{
 public class AsteroidModel: IInitializable
 {
     public int Damage { get; }
@@ -34,4 +36,5 @@ public class AsteroidModel: IInitializable
     public void DecreaseHealth(int damage) => _healthModel.DecreaseHealth(damage);
     
     private void SetDead() => _positionableModel.Deactivate();
+}
 }

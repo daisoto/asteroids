@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using Data;
 using Zenject;
 
+namespace Gameplay
+{
 public class LevelsController
 {
     private readonly Dictionary<AsteroidSize, AsteroidsNumProvider> 
@@ -37,17 +40,17 @@ public class LevelsController
         };
     }
     
-    public void StartLevel(int level, Action goBack)
+    public void StartLevel(int level, Action onFinish)
     {
         var data = GetLevelData(level);
         _levelController
-            .SetOnLevelFinished(FinishLevel)// TODO Return to level select
-            .StartLevel(data, goBack); // TODO Return to level select 
+            .SetOnLevelFinished(FinishLevel)
+            .StartLevel(data);
     
         void FinishLevel()
         {
             _levelsData[level].IsFinished = true;
-            goBack.Invoke();
+            onFinish.Invoke();
         }
     }
 
@@ -81,4 +84,5 @@ public class LevelsController
             _asteroidsNumProviders[size].GetNum(level, asteroidsLeft) 
             : asteroidsLeft;
     }
+}
 }

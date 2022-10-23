@@ -1,6 +1,8 @@
 using UnityEngine;
 using Zenject;
 
+namespace Gameplay
+{
 public class SpaceshipController: IInitializable
 {
     private readonly SpaceshipModel _model;
@@ -30,4 +32,5 @@ public class SpaceshipController: IInitializable
     public Vector3 GetBarrelPosition() =>  _behaviour.GetBarrelPosition();
     
     private void ReceiveDamage(int damage) => _model.DecreaseHealth(damage); 
+}
 }

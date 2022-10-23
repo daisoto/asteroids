@@ -2,6 +2,8 @@
 using UnityEngine;
 using Zenject;
 
+namespace Gameplay
+{
 public class PositionableModel: IInitializable
 {
     private readonly ReactiveProperty<bool> _isActive;
@@ -24,4 +26,5 @@ public class PositionableModel: IInitializable
     {
         _isActive.Value = false;
     }
+}
 }

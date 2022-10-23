@@ -1,1 +1,4 @@
-﻿public enum AsteroidSize { Small, Medium, Big }
+﻿namespace Gameplay
+{
+public enum AsteroidSize { Small, Medium, Big }
+}

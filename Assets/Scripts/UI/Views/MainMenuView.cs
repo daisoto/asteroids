@@ -2,6 +2,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+namespace UI
+{
 public class MainMenuView: View
 {
     [SerializeField]
@@ -45,4 +47,5 @@ public class MainMenuView: View
         
         return this;
     }
+}
 }
