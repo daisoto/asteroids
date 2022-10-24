@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: New LevelsData
   m_EditorClassIdentifier: 
   _maxLevel: 5
-  _openedColor: {r: 0, g: 1, b: 0.9400835, a: 1}
-  _closedColor: {r: 0.24627909, g: 0, b: 0.3207547, a: 1}
-  _finishedColor: {r: 0.09411765, g: 0, b: 1, a: 1}
+  _openedColor: {r: 1, g: 0, b: 1, a: 1}
+  _closedColor: {r: 0, g: 0, b: 0, a: 1}
+  _finishedColor: {r: 0.2, g: 0, b: 1, a: 1}
