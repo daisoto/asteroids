@@ -8,18 +8,17 @@ namespace Gameplay
 public class LevelController: IInitializable, IDisposable
 {
     private readonly AsteroidsController _asteroidsController;
-    private readonly PlayerController _playerController;
     private readonly Camera _camera;
     private readonly SignalBus _signalBus;
     
     private int _asteroidsNum; 
-    private Action _onLevelFinished;
+    private int _currentLevel;
+    private Action<int> _onLevelFinished;
 
     public LevelController(AsteroidsController asteroidsController, 
-        PlayerController playerController, Camera camera, SignalBus signalBus)
+        Camera camera, SignalBus signalBus)
     {
         _asteroidsController = asteroidsController;
-        _playerController = playerController;
         _camera = camera;
         _signalBus = signalBus;
     }
@@ -34,7 +33,7 @@ public class LevelController: IInitializable, IDisposable
         _signalBus.Unsubscribe<AsteroidCollapseSignal>(ProcessCollapse);
     }
     
-    public LevelController SetOnLevelFinished(Action onLevelFinished)
+    public LevelController SetOnLevelFinished(Action<int> onLevelFinished)
     {
         _onLevelFinished = onLevelFinished;
         
@@ -44,6 +43,7 @@ public class LevelController: IInitializable, IDisposable
     public void StartLevel(LevelData levelData)
     {
         _asteroidsNum = 0;
+        _currentLevel = levelData.Level;
         var sizes = EnumUtils.GetValues<AsteroidSize>();
         foreach (var size in sizes)
         {
@@ -56,19 +56,7 @@ public class LevelController: IInitializable, IDisposable
                     .SetPosition.Execute(GetRandomPosition());
         }
         
-        ResumeGame();
-    }
-    
-    public void PauseGame()
-    {
-        Time.timeScale = 0;
-        _playerController.SetActive(false);
-    }
-    
-    public void ResumeGame()
-    {
-        Time.timeScale = 1;
-        _playerController.SetActive(true);
+        _signalBus.Fire(new ResumeGameSignal());
     }
 
     private void ProcessCollapse(AsteroidCollapseSignal signal)
@@ -115,8 +103,8 @@ public class LevelController: IInitializable, IDisposable
     {
         if (_asteroidsNum == 0)
         {
-            PauseGame();
-            _onLevelFinished?.Invoke();
+            _signalBus.Fire(new PauseGameSignal());
+            _onLevelFinished?.Invoke(_currentLevel);
         }
     }
 }

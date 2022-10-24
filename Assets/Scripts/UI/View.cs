@@ -11,14 +11,14 @@ public class View: MonoBehaviour
     protected Action _onShow;
     protected Action _onClose;
     
-    public View OnShow(Action onShow)
+    public View SetOnShow(Action onShow)
     {
         _onShow = onShow;
         
         return this;
     }
     
-    public View OnClose(Action onClose)
+    public View SetOnClose(Action onClose)
     {
         _onClose = onClose;
         

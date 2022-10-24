@@ -6,17 +6,17 @@ public class UIManager: IInitializable
 {
     private readonly MainMenuPresenter _mainMenuPresenter;
     private readonly ShipSelectionPresenter _shipSelectionPresenter;
-    private readonly LevelSelectionPresenter _levelSelectionPresenter;
+    private readonly MapPresenter _mapPresenter;
     private readonly InGameMenuPresenter _inGameMenuPresenter;
 
     public UIManager(MainMenuPresenter mainMenuPresenter, 
         ShipSelectionPresenter shipSelectionPresenter, 
-        LevelSelectionPresenter levelSelectionPresenter, 
+        MapPresenter mapPresenter, 
         InGameMenuPresenter inGameMenuPresenter)
     {
         _mainMenuPresenter = mainMenuPresenter;
         _shipSelectionPresenter = shipSelectionPresenter;
-        _levelSelectionPresenter = levelSelectionPresenter;
+        _mapPresenter = mapPresenter;
         _inGameMenuPresenter = inGameMenuPresenter;
     }
     
@@ -24,18 +24,22 @@ public class UIManager: IInitializable
     {
         ShowMainMenu();
         
-        _shipSelectionPresenter.Initialize(
-            _levelSelectionPresenter.Show, ShowMainMenu);
+        _shipSelectionPresenter
+            .SetOnContinue(_mapPresenter.Show)
+            .SetOnBack(ShowMainMenu);
         
-        _inGameMenuPresenter.Initialize(_levelSelectionPresenter.Show);
+        _mapPresenter
+            .SetOnBack(_shipSelectionPresenter.Show);
+        
+        _inGameMenuPresenter
+            .SetOnExit(_mapPresenter.Show);
     }
     
     private void ShowMainMenu()
     {
-        _mainMenuPresenter.
-            Initialize(
-            _shipSelectionPresenter.Show, 
-            _levelSelectionPresenter.Show)
+        _mainMenuPresenter
+            .SetOnNewGame(_shipSelectionPresenter.Show)
+            .SetOnContinue(_mapPresenter.Show)
             .Show();
     }
 }

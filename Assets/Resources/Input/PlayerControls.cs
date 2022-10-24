@@ -1,4 +1,4 @@
-// GENERATED AUTOMATICALLY FROM 'Assets/Resources/PlayerControls.inputactions'
+// GENERATED AUTOMATICALLY FROM 'Assets/Resources/Input/PlayerControls.inputactions'
 
 using System;
 using System.Collections;
@@ -36,7 +36,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 },
                 {
                     ""name"": ""Fire"",
-                    ""type"": ""Button"",
+                    ""type"": ""PassThrough"",
                     ""id"": ""8ce1476b-5490-4efe-a9fd-920e17953d7d"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",

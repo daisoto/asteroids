@@ -67,7 +67,7 @@ public class InputManager
     
     private void ProcessFireInput(InputAction.CallbackContext ctx)
     {
-        IsFiring = ctx.ReadValue<bool>();
+        IsFiring = ctx.ReadValue<float>().Equals(1);
     }
 }
 }

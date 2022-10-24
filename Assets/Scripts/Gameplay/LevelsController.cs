@@ -15,6 +15,10 @@ public class LevelsController
     
     private readonly List<LevelData> _levelsData;
     public IList<LevelData> LevelsData => _levelsData;
+    
+    private Action _onLevelStart; 
+    private Action _onLevelFinished; 
+    private Action<int> _onSpecificLevelFinished;
 
     public LevelsController(LevelController levelController,
         [Inject(Id = AsteroidSize.Small)]
@@ -40,18 +44,38 @@ public class LevelsController
         };
     }
     
-    public void StartLevel(int level, Action onFinish)
+    public LevelsController SetOnLevelStart(Action onLevelStart)
     {
+        _onLevelStart = onLevelStart;
+        
+        return this;
+    }
+    
+    public LevelsController SetOnLevelFinished(Action onLevelFinished)
+    {
+        _onLevelFinished = onLevelFinished;
+        
+        return this;
+    }
+    
+    public void StartLevel(int level, Action<int> onFinish)
+    {
+        _onLevelStart?.Invoke();
+        
+        _onSpecificLevelFinished = onFinish;
+        
         var data = GetLevelData(level);
         _levelController
             .SetOnLevelFinished(FinishLevel)
             .StartLevel(data);
+    }
     
-        void FinishLevel()
-        {
-            _levelsData[level].IsFinished = true;
-            onFinish.Invoke();
-        }
+    private void FinishLevel(int level)
+    {
+        _levelsData[level].IsFinished = true;
+        
+        _onSpecificLevelFinished?.Invoke(level);
+        _onLevelFinished?.Invoke();
     }
 
     private LevelData GetLevelData(int level)

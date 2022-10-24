@@ -20,14 +20,10 @@ public class ProjectInstaller : MonoInstaller
     
     [SerializeField]
     private LevelsData _levelsData;
-    
-    [SerializeField]
-    private ProjectileBehaviour _projectileBehaviourPrefab;
 
     public override void InstallBindings()
     {
         Container.BindInstance(_spaceshipsData);
-        Container.BindInstance(_projectileBehaviourPrefab);
         Container.BindInstance(_levelsData);
         
         BindSignals();
@@ -36,6 +32,10 @@ public class ProjectInstaller : MonoInstaller
         BindUI();
         
         Container.BindInterfacesAndSelfTo<InputManager>()
+            .AsSingle()
+            .NonLazy();
+        
+        Container.BindInterfacesAndSelfTo<GameplayController>()
             .AsSingle()
             .NonLazy();
         
@@ -54,7 +54,11 @@ public class ProjectInstaller : MonoInstaller
             .AsSingle()
             .NonLazy();
         
-        Container.BindInterfacesAndSelfTo<LevelSelectionPresenter>()
+        Container.BindInterfacesAndSelfTo<MapPresenter>()
+            .AsSingle()
+            .NonLazy();
+        
+        Container.BindInterfacesAndSelfTo<InGameMenuPresenter>()
             .AsSingle()
             .NonLazy();
         
