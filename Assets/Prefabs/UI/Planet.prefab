@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1671955615005739691}
   - component: {fileID: 1671955615005739692}
   - component: {fileID: 1671955615005739693}
+  - component: {fileID: 4887834604005369823}
   m_Layer: 5
   m_Name: Planet
   m_TagString: Untagged
@@ -135,3 +136,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _image: {fileID: 1671955615005739691}
   _button: {fileID: 1671955615005739692}
+--- !u!114 &4887834604005369823
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1671955615005739670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
+  m_EffectDistance: {x: 5, y: -5}
+  m_UseGraphicAlpha: 1

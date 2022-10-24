@@ -23,23 +23,38 @@ public class ProjectInstaller : MonoInstaller
 
     public override void InstallBindings()
     {
-        Container.BindInstance(_spaceshipsData);
-        Container.BindInstance(_levelsData);
-        
         BindSignals();
         BindLevels();
-        BindAsteroids();
         BindUI();
+        BindSpaceship();
+        BindAsteroids();
         
         Container.BindInterfacesAndSelfTo<InputManager>()
+            .AsSingle()
+            .NonLazy();
+
+        Container.BindInterfacesAndSelfTo<PlayerController>()
             .AsSingle()
             .NonLazy();
         
         Container.BindInterfacesAndSelfTo<GameplayController>()
             .AsSingle()
             .NonLazy();
+    }
+    
+    private void BindSpaceship()
+    {
+        Container.BindInstance(_spaceshipsData);
         
         Container.BindInterfacesAndSelfTo<SpaceshipDataManager>()
+            .AsSingle()
+            .NonLazy();
+        
+        Container.BindInterfacesAndSelfTo<SpaceshipController>()
+            .AsSingle()
+            .NonLazy();
+        
+        Container.BindInterfacesAndSelfTo<BlasterController>()
             .AsSingle()
             .NonLazy();
     }
@@ -58,6 +73,10 @@ public class ProjectInstaller : MonoInstaller
             .AsSingle()
             .NonLazy();
         
+        Container.BindInterfacesAndSelfTo<ShipHealthPresenter>()
+            .AsSingle()
+            .NonLazy();
+        
         Container.BindInterfacesAndSelfTo<InGameMenuPresenter>()
             .AsSingle()
             .NonLazy();
@@ -69,6 +88,8 @@ public class ProjectInstaller : MonoInstaller
     
     private void BindLevels()
     {
+        Container.BindInstance(_levelsData);
+        
         Container.BindInterfacesAndSelfTo<LevelsDataManager>()
             .AsSingle()
             .NonLazy();

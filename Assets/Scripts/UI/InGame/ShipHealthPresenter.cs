@@ -5,17 +5,18 @@ using Gameplay;
 
 namespace UI
 {
-public class ShipHealthPresenter: IInitializable, IDisposable
+public class ShipHealthPresenter: Presenter<CompoundBarView>, IInitializable, IDisposable
 {
     private readonly SpaceshipModel _model;
-    private readonly CompoundBarView _view;
     
     private IDisposable _disposable;
 
-    public ShipHealthPresenter(SpaceshipModel model, CompoundBarView view)
+    public ShipHealthPresenter(SpaceshipModel model, 
+        [Inject(Id = UIManager.SHIP_HEALTH_ID)]
+        CompoundBarView view) 
+        : base(view )
     {
         _model = model;
-        _view = view;
     }
     
     public void Initialize()

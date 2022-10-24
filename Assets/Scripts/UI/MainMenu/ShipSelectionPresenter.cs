@@ -9,16 +9,18 @@ namespace UI
 public class ShipSelectionPresenter: Presenter<ShipSelectionView>, IInitializable
 {
     private readonly IList<SpaceshipData> _data; 
+    private readonly SignalBus _signalBus;
     private readonly int _maxValue;
     
     private Action _onContinue;
     private Action _onBack;
     
-    public SpaceshipData SelectedData { get; private set; }
+    private SpaceshipData _selectedData;
     
     public ShipSelectionPresenter(SpaceshipsData data, 
-        ShipSelectionView view): base(view)
+        ShipSelectionView view, SignalBus signalBus): base(view)
     {
+        _signalBus = signalBus;
         _data = data.Data;
         _maxValue = data.MaxValue;
     }
@@ -36,6 +38,7 @@ public class ShipSelectionPresenter: Presenter<ShipSelectionView>, IInitializabl
     public ShipSelectionPresenter SetOnContinue(Action onContinue)
     {
         _onContinue = onContinue;
+        _signalBus.Fire(new SetSpaceshipDataSignal(_selectedData));
         
         return this;
     }
@@ -61,13 +64,13 @@ public class ShipSelectionPresenter: Presenter<ShipSelectionView>, IInitializabl
     
     private void SetSelected(int index)
     {
-        SelectedData = _data[index];
-        _view.RepaintShip(SelectedData.Texture)
+        _selectedData = _data[index];
+        _view.RepaintShip(_selectedData.Texture)
             .SetCharacteristics(
-                SelectedData.MaxHealth, 
-                SelectedData.Damage, 
-                SelectedData.FireRate, 
-                SelectedData.Speed);
+                _selectedData.MaxHealth, 
+                _selectedData.Damage, 
+                _selectedData.FireRate, 
+                _selectedData.Speed);
     }
 }
 }

@@ -20,12 +20,14 @@ public class GameplayController: IInitializable, IDisposable
     {
         _signalBus.Subscribe<ResumeGameSignal>(ResumeGame);
         _signalBus.Subscribe<PauseGameSignal>(PauseGame);
+        _signalBus.Subscribe<QuitGameSignal>(QuitGame);
     }
 
     public void Dispose()
     {
         _signalBus.Unsubscribe<ResumeGameSignal>(ResumeGame);
         _signalBus.Unsubscribe<PauseGameSignal>(PauseGame);
+        _signalBus.Unsubscribe<QuitGameSignal>(QuitGame);
     }
 
     private void PauseGame()
@@ -39,5 +41,7 @@ public class GameplayController: IInitializable, IDisposable
         Time.timeScale = 1;
         _playerController.SetActive(true);
     }
+    
+    private void QuitGame() => Application.Quit();
 }
 }

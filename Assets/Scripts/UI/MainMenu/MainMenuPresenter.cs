@@ -1,6 +1,6 @@
 ﻿using System;
-using UnityEngine;
 using Data;
+using Gameplay;
 using Zenject;
 
 namespace UI
@@ -8,14 +8,18 @@ namespace UI
 public class MainMenuPresenter: Presenter<MainMenuView>, IInitializable
 {
     private readonly SpaceshipDataManager _spaceshipDataManager;
+    private readonly SignalBus _signalBus;
     
+    private SpaceshipData _loadedData;
     private Action _onContinue;
     private Action _onNewGame;
     
     public MainMenuPresenter(MainMenuView view, 
-        SpaceshipDataManager spaceshipDataManager): base (view)
+        SpaceshipDataManager spaceshipDataManager, 
+        SignalBus signalBus): base (view)
     {
         _spaceshipDataManager = spaceshipDataManager;
+        _signalBus = signalBus;
     }
     
     public void Initialize()
@@ -24,7 +28,7 @@ public class MainMenuPresenter: Presenter<MainMenuView>, IInitializable
             .OnNewGame(NewGame)
             .OnContinue(Continue)
             .SetContinue(CheckSave())
-            .OnExit(ExitGame);
+            .OnExit(Exit);
     }
     
     public MainMenuPresenter SetOnNewGame(Action onNewGame)
@@ -50,11 +54,12 @@ public class MainMenuPresenter: Presenter<MainMenuView>, IInitializable
     private void Continue()
     {
         Close();
+        _signalBus.Fire(new SetSpaceshipDataSignal(_loadedData, true));
         _onContinue?.Invoke();
     }
     
-    private bool CheckSave() => _spaceshipDataManager.TryLoad(out var data);
+    private bool CheckSave() => _spaceshipDataManager.TryLoad(out _loadedData);
     
-    private void ExitGame() => Application.Quit();
+    private void Exit() => _signalBus.Fire(new QuitGameSignal());
 }
 }

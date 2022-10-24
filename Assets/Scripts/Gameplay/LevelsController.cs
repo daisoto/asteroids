@@ -73,6 +73,7 @@ public class LevelsController
     private void FinishLevel(int level)
     {
         _levelsData[level].IsFinished = true;
+        _levelsDataManager.Save(_levelsData);
         
         _onSpecificLevelFinished?.Invoke(level);
         _onLevelFinished?.Invoke();

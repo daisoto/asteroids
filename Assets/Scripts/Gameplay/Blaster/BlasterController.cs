@@ -1,30 +1,49 @@
 ﻿using System;
+using Data;
 using UniRx;
 using UnityEngine;
+using Zenject;
 
 namespace Gameplay
 {
-public class BlasterController: IDisposable
+public class BlasterController: IInitializable, IDisposable
 {
-    private readonly BlasterModel _model;
     private readonly IPool<ProjectileModel> _projectilesPool;
     private readonly IFactory<ProjectileBehaviour> _projectileBehavioursFactory;
     private readonly SpaceshipController _spaceshipController;
+    private readonly SignalBus _signalBus; 
     
     private readonly DisposablesContainer _disposablesContainer;
     
-    public BlasterController(BlasterModel model, SpaceshipController spaceshipController,
-        IFactory<ProjectileBehaviour> projectileBehavioursFactory)
+    private BlasterModel _model;
+    
+    public BlasterController(SpaceshipController spaceshipController,
+        IFactory<ProjectileBehaviour> projectileBehavioursFactory, 
+        SignalBus signalBus)
     {
-        _model = model;
         _spaceshipController = spaceshipController;
         _projectileBehavioursFactory = projectileBehavioursFactory;
-        
+        _signalBus = signalBus;
+
         _projectilesPool = GetProjectilesPool();
         _disposablesContainer = new DisposablesContainer();
     }
+
+    public void Initialize()
+    {
+        _signalBus.Subscribe<SetSpaceshipDataSignal>(SetData);
+    }
     
-    public void Dispose() => _disposablesContainer.Dispose();
+    public void Dispose()
+    {
+        _signalBus.Unsubscribe<SetSpaceshipDataSignal>(SetData);
+        _disposablesContainer.Dispose();
+    }
+    
+    private void SetData(SetSpaceshipDataSignal signal)
+    {
+        _model = GetBlasterModel(signal.Data);
+    }
     
     public void TryToFire()
     {
@@ -36,6 +55,9 @@ public class BlasterController: IDisposable
             projectile.Initialize();
         }
     }
+    
+    private BlasterModel GetBlasterModel(SpaceshipData data) 
+        => new BlasterModel(data.Damage, data.FireRate, data.ProjectileSpeed);
     
     private ProjectileModel GetProjectileModel()
     {
