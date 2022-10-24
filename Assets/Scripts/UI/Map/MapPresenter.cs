@@ -66,7 +66,7 @@ public class MapPresenter: Presenter<MapView>, IInitializable, IDisposable
     {
         for (int i = 0; i < _models.Count; i++)
         {
-            var level = i;
+            var level = i + 1;
             var model  = _models[i];
             
             _view.SetOnClick(level, Select);
@@ -101,11 +101,15 @@ public class MapPresenter: Presenter<MapView>, IInitializable, IDisposable
         for (int level = 1; level <= maxLevel; level++)
         {
             var isFirst = level == 1;
-            var levelData = levelsDataDict[level];
-            var prevLevelData = levelsDataDict[level - 1];
             
-            var isFinished = levelData is {IsFinished: true};
-            var isPrevFinished = prevLevelData is {IsFinished: true};
+            var data = levelsDataDict.ContainsKey(level) ? 
+                levelsDataDict[level] : null;
+            
+            var prevData = levelsDataDict.ContainsKey(level - 1) ? 
+                levelsDataDict[level - 1] : null;
+            
+            var isFinished = data is {IsFinished: true};
+            var isPrevFinished = prevData is {IsFinished: true};
             var isAvailable = isFirst || isPrevFinished;
             
             var planetModel = new PlanetModel(isAvailable, isFinished);

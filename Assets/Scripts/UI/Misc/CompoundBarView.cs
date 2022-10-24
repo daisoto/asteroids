@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace UI
 {
@@ -9,14 +10,9 @@ public class CompoundBarView: View
     private GameObject _cellPrefab;
     
     [SerializeField]
-    private Transform _cellsContainer;
+    private RectTransform _cellsContainer;
     
-    private List<GameObject> _cells;
-    
-    private void Start()
-    {
-        _cells = new List<GameObject>();
-    }
+    private readonly List<GameObject> _cells = new List<GameObject>();
     
     public void Init(int maxNum)
     {
@@ -36,17 +32,10 @@ public class CompoundBarView: View
     
     public void SetCells(int num)
     {
-        var count = _cells.Count;
+        for (int i = 0; i < _cells.Count; i++)
+            _cells[i].SetActive(i < num);
         
-        if (num > count)
-        {
-            Debug.LogError("Required cells num is too big!");
-            
-            return;
-        }
-        
-        for (int i = 0; i < count; i++)
-            _cells[i].SetActive(i <= num);
+        LayoutRebuilder.ForceRebuildLayoutImmediate(_cellsContainer);
     }
 }
 }

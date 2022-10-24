@@ -53,9 +53,9 @@ public class MainMenuPresenter: Presenter<MainMenuView>, IInitializable
     
     private void Continue()
     {
-        Close();
-        _signalBus.Fire(new SetSpaceshipDataSignal(_loadedData, true));
+        _signalBus.Fire(new SetSpaceshipDataSignal(_loadedData));
         _onContinue?.Invoke();
+        Close();
     }
     
     private bool CheckSave() => _spaceshipDataManager.TryLoad(out _loadedData);

@@ -38,28 +38,33 @@ public class SpaceshipData
 {
     [SerializeField]
     private string _title;
-    public string Title => _title;
+    public string Title { get => _title; set => _title = value; }
 
     [SerializeField, Range(1, 3)]
     private int _damage;
-    public int Damage => _damage;
+    public int Damage 
+    { get => _damage; set => _damage = value; }
     
     [SerializeField, Range(1, 3)]
     private int _fireRate;
-    public int FireRate => _fireRate;
+    public int FireRate 
+    { get => _fireRate; set => _fireRate = value; }
     
     [SerializeField, Range(1, 3)]
     private int _speed;
-    public int Speed => _speed;
+    public int Speed 
+    { get => _speed; set => _speed = value; }
     
     [Header("Should equals 3 due to conditions")]
     [SerializeField]
     private int _maxHealth;
-    public int MaxHealth => _maxHealth;
+    public int MaxHealth 
+    { get => _maxHealth; set => _maxHealth = value; }
     
     [SerializeField]
     private int _projectileSpeed;
-    public int ProjectileSpeed => _projectileSpeed; 
+    public int ProjectileSpeed 
+    { get => _projectileSpeed; set => _projectileSpeed = value; }
 }
 
 [Serializable]
