@@ -11,19 +11,26 @@ public class SpaceshipController: IInitializable, IDisposable
     private readonly SpaceshipBehaviour _behaviour;
     private readonly SignalBus _signalBus;
     private readonly SpaceshipDataManager _spaceshipDataManager;
+    private readonly ITextureProvider _textureProvider;
 
     private SpaceshipModel _model;
     
-    public IReadOnlyReactiveProperty<int> Health => _model.Health;
+    public IReadOnlyReactiveProperty<int> Health => _health;
+    private readonly ReactiveProperty<int> _health;
     public IReadOnlyReactiveProperty<int> MaxHealth => _maxHealth;
     private readonly ReactiveProperty<int> _maxHealth;
+    
+    private IDisposable _healthSubscription;
 
     public SpaceshipController(SpaceshipBehaviour behaviour, 
-        SignalBus signalBus, SpaceshipDataManager spaceshipDataManager)
+        SignalBus signalBus, SpaceshipDataManager spaceshipDataManager, 
+        ITextureProvider textureProvider)
     {
         _behaviour = behaviour;
         _signalBus = signalBus;
         _spaceshipDataManager = spaceshipDataManager;
+        _textureProvider = textureProvider;
+        _health = new ReactiveProperty<int>();
         _maxHealth = new ReactiveProperty<int>();
     }
 
@@ -38,6 +45,7 @@ public class SpaceshipController: IInitializable, IDisposable
     public void Dispose()
     {
         _signalBus.Unsubscribe<SetSpaceshipDataSignal>(SetData);
+        _healthSubscription?.Dispose();
     }
     
     private void SetData(SetSpaceshipDataSignal signal)
@@ -49,7 +57,12 @@ public class SpaceshipController: IInitializable, IDisposable
         
         _maxHealth.Value = data.MaxHealth;
         _model = GetSpaceshipModel(data);
-        _behaviour.SetTexture(_model.Texture);
+        _behaviour.SetTexture(_textureProvider.Get(data.Title));
+        
+        _healthSubscription = _model.Health.Subscribe(health =>
+        {
+            _health.Value = health;
+        });
     }
     
     public void Move(Vector2 delta)
@@ -69,8 +82,7 @@ public class SpaceshipController: IInitializable, IDisposable
         var healthModel = new HealthModel(data.MaxHealth);
         var speedProvider = new UniformSpeedProvider(data.Speed);
         
-        return new SpaceshipModel(
-            healthModel, speedProvider, data.Texture);
+        return new SpaceshipModel(healthModel, speedProvider);
     }
 }
 }

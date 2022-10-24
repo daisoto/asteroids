@@ -10,6 +10,7 @@ public class ShipSelectionPresenter: Presenter<ShipSelectionView>, IInitializabl
 {
     private readonly IList<SpaceshipData> _data; 
     private readonly SignalBus _signalBus;
+    private readonly ITextureProvider _textureProvider;
     private readonly int _maxValue;
     
     private Action _onContinue;
@@ -18,9 +19,11 @@ public class ShipSelectionPresenter: Presenter<ShipSelectionView>, IInitializabl
     private SpaceshipData _selectedData;
     
     public ShipSelectionPresenter(SpaceshipsData data, 
-        ShipSelectionView view, SignalBus signalBus): base(view)
+        ShipSelectionView view, SignalBus signalBus, 
+        ITextureProvider textureProvider): base(view)
     {
         _signalBus = signalBus;
+        _textureProvider = textureProvider;
         _data = data.Data;
         _maxValue = data.MaxValue;
     }
@@ -32,13 +35,13 @@ public class ShipSelectionPresenter: Presenter<ShipSelectionView>, IInitializabl
             .SetOnBack(Back)
             .Draw(_data
                 .Select(d => d.Title)
-                .ToList(), SetSelected, _maxValue);
+                .ToList(), SetSelected, _maxValue)
+            .SetOnShow(SelectDefault);
     }
     
     public ShipSelectionPresenter SetOnContinue(Action onContinue)
     {
         _onContinue = onContinue;
-        _signalBus.Fire(new SetSpaceshipDataSignal(_selectedData));
         
         return this;
     }
@@ -52,6 +55,7 @@ public class ShipSelectionPresenter: Presenter<ShipSelectionView>, IInitializabl
     
     private void Continue()
     {
+        _signalBus.Fire(new SetSpaceshipDataSignal(_selectedData, true));
         _onContinue?.Invoke();
         Close();
     }
@@ -62,10 +66,12 @@ public class ShipSelectionPresenter: Presenter<ShipSelectionView>, IInitializabl
         Close();
     }
     
+    private void SelectDefault() => SetSelected(0);
+    
     private void SetSelected(int index)
     {
         _selectedData = _data[index];
-        _view.RepaintShip(_selectedData.Texture)
+        _view.RepaintShip(_textureProvider.Get(_selectedData.Title))
             .SetCharacteristics(
                 _selectedData.MaxHealth, 
                 _selectedData.Damage, 
