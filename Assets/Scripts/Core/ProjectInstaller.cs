@@ -44,7 +44,12 @@ public class ProjectInstaller : MonoInstaller
     
     private void BindSpaceship()
     {
-        Container.BindInstance(_spaceshipsData);
+        Container.BindInterfacesAndSelfTo<SpaceshipsData>()
+            .FromInstance(_spaceshipsData);
+        
+        Container.BindInterfacesAndSelfTo<IFactory<ProjectileBehaviour>>()
+            .FromInstance(new Factory<ProjectileBehaviour>(
+                _spaceshipsData.GetProjectileBehaviour));
         
         Container.BindInterfacesAndSelfTo<SpaceshipDataManager>()
             .AsSingle()
@@ -88,7 +93,8 @@ public class ProjectInstaller : MonoInstaller
     
     private void BindLevels()
     {
-        Container.BindInstance(_levelsData);
+        Container.BindInterfacesAndSelfTo<LevelsData>()
+            .FromInstance(_levelsData);
         
         Container.BindInterfacesAndSelfTo<LevelsDataManager>()
             .AsSingle()
@@ -105,9 +111,7 @@ public class ProjectInstaller : MonoInstaller
     
     private void BindAsteroids()
     {
-        Container.BindInstance(_asteroidsData);
-        
-        Container.BindInterfacesTo<IFactory<AsteroidBehaviour, AsteroidSize>>()
+        Container.BindInterfacesAndSelfTo<AsteroidsData>()
             .FromInstance(_asteroidsData);
         
         Container.BindInterfacesTo<AsteroidsFactory>()
@@ -115,11 +119,15 @@ public class ProjectInstaller : MonoInstaller
         
         Container.Bind<AsteroidsNumProvider>()
             .WithId(AsteroidSize.Small)
-            .To<SmallAsteroidsNumProvider>();
+            .To<SmallAsteroidsNumProvider>()
+            .AsSingle()
+            .NonLazy();
 
         Container.Bind<AsteroidsNumProvider>()
             .WithId(AsteroidSize.Medium)
-            .To<MediumAsteroidsNumProvider>();
+            .To<MediumAsteroidsNumProvider>()
+            .AsSingle()
+            .NonLazy();
         
         Container.BindInterfacesAndSelfTo<AsteroidsController>()
             .AsSingle()

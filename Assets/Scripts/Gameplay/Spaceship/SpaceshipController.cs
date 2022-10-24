@@ -1,3 +1,4 @@
+using UniRx;
 using System;
 using Data;
 using UnityEngine;
@@ -13,12 +14,17 @@ public class SpaceshipController: IInitializable, IDisposable
 
     private SpaceshipModel _model;
     
+    public IReadOnlyReactiveProperty<int> Health => _model.Health;
+    public IReadOnlyReactiveProperty<int> MaxHealth => _maxHealth;
+    private readonly ReactiveProperty<int> _maxHealth;
+
     public SpaceshipController(SpaceshipBehaviour behaviour, 
         SignalBus signalBus, SpaceshipDataManager spaceshipDataManager)
     {
         _behaviour = behaviour;
         _signalBus = signalBus;
         _spaceshipDataManager = spaceshipDataManager;
+        _maxHealth = new ReactiveProperty<int>();
     }
 
     public void Initialize()
@@ -41,6 +47,7 @@ public class SpaceshipController: IInitializable, IDisposable
         if (signal.IsNew)
             _spaceshipDataManager.Save(data);
         
+        _maxHealth.Value = data.MaxHealth;
         _model = GetSpaceshipModel(data);
         _behaviour.SetTexture(_model.Texture);
     }

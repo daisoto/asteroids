@@ -11,12 +11,22 @@ public class CompoundBarView: View
     [SerializeField]
     private Transform _cellsContainer;
     
-    private IList<GameObject> _cells;
+    private List<GameObject> _cells;
+    
+    private void Start()
+    {
+        _cells = new List<GameObject>();
+    }
     
     public void Init(int maxNum)
     {
-        _cells = new List<GameObject>();
-        
+        var curCount = _cells.Count;
+        if (curCount < maxNum)
+        {
+            var diff = maxNum - curCount;
+            _cells.AddRange(new List<GameObject>(diff));
+        }
+
         for (int i = 0; i < maxNum; i++)
         {
             var cell = Instantiate(_cellPrefab, _cellsContainer);

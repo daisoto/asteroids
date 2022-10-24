@@ -7,27 +7,27 @@ namespace UI
 {
 public class ShipHealthPresenter: Presenter<CompoundBarView>, IInitializable, IDisposable
 {
-    private readonly SpaceshipModel _model;
-    
-    private IDisposable _disposable;
+    private readonly SpaceshipController _controller;
+    private readonly DisposablesContainer _disposablesContainer;
 
-    public ShipHealthPresenter(SpaceshipModel model, 
+    public ShipHealthPresenter(SpaceshipController controller, 
         [Inject(Id = UIManager.SHIP_HEALTH_ID)]
         CompoundBarView view) 
         : base(view )
     {
-        _model = model;
+        _controller = controller;
+        _disposablesContainer = new DisposablesContainer();
     }
     
     public void Initialize()
     {
-        _view.Init(_model.MaxHealth);
-        _disposable = _model.Health.Subscribe(_view.SetCells);
+        _disposablesContainer.Add(_controller.MaxHealth
+            .Subscribe(_view.Init));
+        
+        _disposablesContainer.Add(_controller.Health
+            .Subscribe(_view.SetCells));
     }
     
-    public void Dispose()
-    {
-        _disposable.Dispose();
-    }
+    public void Dispose() => _disposablesContainer.Dispose();
 }
 }
