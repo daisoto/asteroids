@@ -55,19 +55,13 @@ public class InputManager
         _playerControls.Player.Fire.canceled -= ProcessFireInput;
     }
 
-    private void ProcessMoveInput(InputAction.CallbackContext ctx)
-    {
+    private void ProcessMoveInput(InputAction.CallbackContext ctx) => 
         Move = ctx.ReadValue<Vector2>();
-    }
 
-    private void ProcessRotateInput(InputAction.CallbackContext ctx)
-    {
+    private void ProcessRotateInput(InputAction.CallbackContext ctx) => 
         Look = ctx.ReadValue<Vector2>();
-    }
     
-    private void ProcessFireInput(InputAction.CallbackContext ctx)
-    {
+    private void ProcessFireInput(InputAction.CallbackContext ctx) =>
         IsFiring = ctx.ReadValue<float>().Equals(1);
-    }
 }
 }

@@ -51,8 +51,10 @@ public class BlasterController: IInitializable, IDisposable
         {
             var projectile = _projectilesPool.Get();
             projectile.SetPosition
-                .Execute(_spaceshipController.GetBarrelPosition());
-            projectile.Initialize();
+                .Execute(
+                    _spaceshipController.GetBarrelPosition());
+            projectile.UpdateSpeed();
+            projectile.Activate();
         }
     }
     

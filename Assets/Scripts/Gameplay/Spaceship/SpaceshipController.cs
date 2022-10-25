@@ -11,6 +11,7 @@ public class SpaceshipController: IInitializable, IDisposable
     private readonly SpaceshipBehaviour _behaviour;
     private readonly SignalBus _signalBus;
     private readonly SpaceshipDataManager _spaceshipDataManager;
+    private readonly Camera _camera;
     private readonly ITextureProvider _textureProvider;
 
     private SpaceshipModel _model;
@@ -24,12 +25,14 @@ public class SpaceshipController: IInitializable, IDisposable
 
     public SpaceshipController(SpaceshipBehaviour behaviour, 
         SignalBus signalBus, SpaceshipDataManager spaceshipDataManager, 
-        ITextureProvider textureProvider)
+        ITextureProvider textureProvider, Camera camera)
     {
         _behaviour = behaviour;
         _signalBus = signalBus;
         _spaceshipDataManager = spaceshipDataManager;
         _textureProvider = textureProvider;
+        _camera = camera;
+        
         _health = new ReactiveProperty<int>();
         _maxHealth = new ReactiveProperty<int>();
     }
@@ -56,7 +59,10 @@ public class SpaceshipController: IInitializable, IDisposable
             _spaceshipDataManager.Save(data);
         
         _maxHealth.Value = data.MaxHealth;
+        
         _model = GetSpaceshipModel(data);
+        _model.UpdateSpeed();
+
         _behaviour.SetTexture(_textureProvider.Get(data.Title));
         
         _healthSubscription = _model.Health.Subscribe(health =>
@@ -67,12 +73,22 @@ public class SpaceshipController: IInitializable, IDisposable
     
     public void Move(Vector2 delta)
     {
-        var motion = _model.Speed * delta;
-        _behaviour.Move(motion);
+        var motion = _model.Speed.Value * delta;
+        var speed = new Vector3(motion.x, 0, motion.y);
+        _behaviour.SetSpeed(speed);
     }
     
-    public void Rotate(Vector2 position) => _behaviour.Rotate(position);
-    
+    public void Rotate(Vector2 position)
+    {
+        var targetPosition = _camera.ScreenToWorldPoint(
+            new Vector3(position.x, position.y, GetDepth()));
+        
+        var relativePos = _behaviour.Position - targetPosition;
+        var rotation = Quaternion.LookRotation(relativePos);
+        
+        _behaviour.Rotate(rotation);
+    }
+
     public Vector3 GetBarrelPosition() =>  _behaviour.GetBarrelPosition();
     
     private void ReceiveDamage(int damage) => _model.DecreaseHealth(damage); 
@@ -84,5 +100,8 @@ public class SpaceshipController: IInitializable, IDisposable
         
         return new SpaceshipModel(healthModel, speedProvider);
     }
+    
+    private float GetDepth() => 
+        _camera.transform.position.y - _behaviour.Position.y;
 }
 }

@@ -16,12 +16,12 @@ public class AsteroidsFactory: Factory<AsteroidModel, AsteroidSize>
         
         foreach (var aData in _data.Data)
             if (aData.Size == size)
-                model = Get(aData);
+                model = CreateModel(aData);
         
         return model;
     }
 
-    private AsteroidModel Get(AsteroidData data)
+    private AsteroidModel CreateModel(AsteroidData data)
     {
         var healthModel = new HealthModel(data.MaxHealth);
         var speedModel = new RandomSpeedModel(data.MaxSpeed, data.MinSpeed);

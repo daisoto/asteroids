@@ -51,9 +51,12 @@ public class LevelController: IInitializable, IDisposable
             _asteroidsNum += num;
             
             for (int i = 0; i < num; i++)
-                _asteroidsController
-                    .CreateAsteroid(size)
-                    .SetPosition.Execute(GetRandomPosition());
+            {
+                var asteroid = _asteroidsController
+                    .CreateAsteroid(size);
+                asteroid.UpdateSpeed();
+                asteroid.SetPosition.Execute(GetRandomPosition());
+            }
         }
         
         _signalBus.Fire(new ResumeGameSignal());

@@ -15,9 +15,7 @@ public class UniformSpeedProvider: ISpeedProvider
         _speedInternal = speed;
     }
     
-    public void Initialize()
-    {
+    public void UpdateSpeed() => 
         _speed.SetValueAndForceNotify(_speedInternal);
-    }
 }
 }

@@ -1,22 +1,18 @@
 ﻿using System;
 using UnityEngine;
-using Zenject;
 
 namespace Gameplay
 {
-public class SpaceshipBehaviour: MonoBehaviour
+public class SpaceshipBehaviour: PositionableBehaviour
 {
-    [Inject]
-    private Camera _camera;
-    
     [SerializeField]
     private Renderer _renderer;
     
     [SerializeField]
-    private Rigidbody _rigidbody;
+    private Transform _barrel;
     
     [SerializeField]
-    private Transform _barrel;
+    private GameObject _trail;
     
     private Action<int> _onDamage;
 
@@ -39,17 +35,16 @@ public class SpaceshipBehaviour: MonoBehaviour
         
         return this;
     }
-    
+
+    public override void SetSpeed(Vector3 speed)
+    {
+        _trail.SetActive(speed != Vector3.zero);
+        base.SetSpeed(speed);
+    }
+
     public Vector3 GetBarrelPosition() => _barrel.position;
 
-    public void Rotate(Vector2 position)
-    {
-        var targetPosition = _camera.ScreenToWorldPoint(position);
-        var relativePos = targetPosition - transform.position;
-        var rotation = Quaternion.LookRotation(relativePos);
-        transform.rotation = rotation;
-    }
+    public void Rotate(Quaternion rotation) => transform.rotation = rotation;
     
-    public void Move(Vector3 motion) => _rigidbody.velocity = motion;
 }
 }

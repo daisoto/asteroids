@@ -1,10 +1,11 @@
 ﻿using UniRx;
-using Zenject;
 
 namespace Gameplay
 {
-public interface ISpeedProvider: IInitializable
+public interface ISpeedProvider
 {
     public IReadOnlyReactiveProperty<float> Speed { get; }
+    
+    void UpdateSpeed();
 }
 }

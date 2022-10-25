@@ -4,7 +4,7 @@ using Zenject;
 
 namespace Gameplay
 {
-public class PositionableModel: IInitializable
+public class PositionableModel
 {
     private readonly ReactiveProperty<bool> _isActive;
     public IReadOnlyReactiveProperty<bool> IsActive => _isActive;
@@ -17,7 +17,7 @@ public class PositionableModel: IInitializable
         SetPosition = new ReactiveCommand<Vector2>();
     }
     
-    public void Initialize()
+    public void Activate()
     {
         _isActive.Value = true;
     }
