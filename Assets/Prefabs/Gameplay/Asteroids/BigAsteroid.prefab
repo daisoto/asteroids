@@ -139,8 +139,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _rigidbody: {fileID: 5428902}
-  _explosion: {fileID: 3760453484362700025}
-  _explosionTime: 1.5
+  _exploder:
+    _explosion: {fileID: 3760453484362700025}
 --- !u!135 &5221838772190305072
 SphereCollider:
   m_ObjectHideFlags: 0

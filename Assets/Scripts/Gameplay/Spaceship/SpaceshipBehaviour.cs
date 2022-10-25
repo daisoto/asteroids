@@ -1,4 +1,5 @@
 ﻿using System;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace Gameplay
@@ -13,6 +14,9 @@ public class SpaceshipBehaviour: SpaceBehaviour
     
     [SerializeField]
     private GameObject _trail;
+    
+    [SerializeField]
+    private Exploder _exploder;
     
     private Action<int> _onDamage;
 
@@ -38,8 +42,10 @@ public class SpaceshipBehaviour: SpaceBehaviour
 
     public void SetTrail(bool flag) => 
         _trail.SetActive(flag);
-
     
     public Vector3 GetBarrelPosition() => _barrel.position;
+    
+    public async UniTask ToggleExplosion() => 
+        await _exploder.ToggleExplosion();
 }
 }

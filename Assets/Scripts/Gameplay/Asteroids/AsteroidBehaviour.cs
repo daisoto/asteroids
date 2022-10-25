@@ -6,10 +6,10 @@ namespace Gameplay
 {
 public class AsteroidBehaviour: SpaceBehaviour
 {
-    public int Damage { get; private set;}
-    
     [SerializeField]
-    private ParticleSystem _explosion;
+    private Exploder _exploder;
+    
+    public int Damage { get; private set;}
     
     private Action<int> _onDamage;
 
@@ -33,11 +33,7 @@ public class AsteroidBehaviour: SpaceBehaviour
         return this;
     }
     
-    public async UniTask ToggleExplosion()
-    {
-        _explosion.Play();
-        
-        await UniTask.WaitUntil(() => !_explosion.isPlaying);
-    }
+    public async UniTask ToggleExplosion() => 
+        await _exploder.ToggleExplosion();
 }
 }

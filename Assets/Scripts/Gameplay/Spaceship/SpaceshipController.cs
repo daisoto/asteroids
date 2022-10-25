@@ -1,5 +1,6 @@
 using UniRx;
 using System;
+using Cysharp.Threading.Tasks;
 using Data;
 using UnityEngine;
 using Zenject;
@@ -105,8 +106,18 @@ public class SpaceshipController:
     {
         var healthModel = new HealthModel(data.MaxHealth);
         var speedProvider = new UniformSpeedProvider(data.Speed);
+        healthModel.SetOnDeath(Explode);
         
         return new SpaceshipModel(healthModel, speedProvider);
+    }
+    
+    private void Explode() => 
+        ExplodeInternal().Forget();
+    
+    private async UniTask ExplodeInternal()
+    {
+        await _behaviour.ToggleExplosion();
+        _behaviour.SetActive(false);
     }
 }
 }
