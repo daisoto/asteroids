@@ -29,9 +29,7 @@ public class UIManager: IInitializable
         _shipSelectionPresenter
             .SetOnContinue(_mapPresenter.Show)
             .SetOnBack(ShowMainMenu);
-        
-        _mapPresenter
-            .SetOnBack(_shipSelectionPresenter.Show);
+
         
         _inGameMenuPresenter
             .SetOnExit(_mapPresenter.Show);
@@ -40,9 +38,24 @@ public class UIManager: IInitializable
     private void ShowMainMenu()
     {
         _mainMenuPresenter
-            .SetOnNewGame(_shipSelectionPresenter.Show)
-            .SetOnContinue(_mapPresenter.Show)
+            .SetOnNewGame(StartNewGame)
+            .SetOnContinue(ContinueGame)
             .Show();
+    }
+    
+    private void StartNewGame()
+    {
+        _shipSelectionPresenter
+            .Show();
+        _mapPresenter
+            .SetOnBack(_shipSelectionPresenter.Show);
+    }
+    
+    private void ContinueGame()
+    {
+        _mapPresenter.Show();
+        _mapPresenter
+            .SetOnBack(ShowMainMenu);
     }
 }
 }
