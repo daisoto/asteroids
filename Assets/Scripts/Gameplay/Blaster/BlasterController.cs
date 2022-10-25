@@ -36,12 +36,14 @@ public class BlasterController: IInitializable, IDisposable
     
     public void Dispose()
     {
+        _model?.Dispose();
         _signalBus.Unsubscribe<SetSpaceshipDataSignal>(SetData);
         _disposablesContainer.Dispose();
     }
     
     private void SetData(SetSpaceshipDataSignal signal)
     {
+        _model?.Dispose();
         _model = GetBlasterModel(signal.Data);
     }
     
@@ -50,12 +52,18 @@ public class BlasterController: IInitializable, IDisposable
         if (_model.CanFire())
         {
             var projectile = _projectilesPool.Get();
-            projectile.SetPosition
-                .Execute(
-                    _spaceshipController.GetBarrelPosition());
+            
+            projectile
+                .SetPosition(_spaceshipController.GetBarrelPosition())
+                .SetRotation(GetRotation(projectile));
             projectile.UpdateSpeed();
             projectile.Activate();
         }
+    }
+    
+    private Quaternion GetRotation(ProjectileModel model)
+    {
+        return _spaceshipController.GetRotation() * model.InitialRotation;
     }
     
     private BlasterModel GetBlasterModel(SpaceshipData data) 
@@ -78,6 +86,7 @@ public class BlasterController: IInitializable, IDisposable
     private void CreateProjectileBehaviour(ProjectileModel model)
     {
         var behaviour = _projectileBehavioursFactory.Get();
+        model.InitialRotation = behaviour.Rotation;
         
         behaviour
             .SetOnCollision(model.Deactivate)
@@ -92,17 +101,17 @@ public class BlasterController: IInitializable, IDisposable
                     _projectilesPool.Return(model);
             }));
         
-        _disposablesContainer.Add(model.SetPosition
+        _disposablesContainer.Add(model.Position
             .Subscribe(position =>
-            {
-                behaviour.Position = position;
-            }));
+                behaviour.Position = position));
+        
+        _disposablesContainer.Add(model.Rotation
+            .Subscribe(position =>
+                behaviour.Rotation = position));
         
         _disposablesContainer.Add(model.Speed
             .Subscribe(speed =>
-            {
-                behaviour.SetSpeed(Vector3.forward * speed);
-            }));
+                behaviour.SetSpeed(speed * -behaviour.Up)));
     }
 }
 }

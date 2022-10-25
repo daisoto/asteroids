@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Gameplay
 {
-public class ProjectileBehaviour: PositionableBehaviour
+public class ProjectileBehaviour: SpaceBehaviour
 {
     private Action _onCollision;
     

@@ -55,7 +55,7 @@ public class LevelController: IInitializable, IDisposable
                 var asteroid = _asteroidsController
                     .CreateAsteroid(size);
                 asteroid.UpdateSpeed();
-                asteroid.SetPosition.Execute(GetRandomPosition());
+                asteroid.SetPosition(GetRandomPosition());
             }
         }
         
@@ -77,19 +77,19 @@ public class LevelController: IInitializable, IDisposable
             case AsteroidSize.Medium:
                 _asteroidsController
                     .CreateAsteroid(AsteroidSize.Small)
-                    .SetPosition.Execute(pos);
+                    .SetPosition(pos);
                 _asteroidsController
                     .CreateAsteroid(AsteroidSize.Small)
-                    .SetPosition.Execute(pos);
+                    .SetPosition(pos);
                 _asteroidsNum++;
                 break;
             case AsteroidSize.Big:
                 _asteroidsController
                     .CreateAsteroid(AsteroidSize.Medium)
-                    .SetPosition.Execute(pos);
+                    .SetPosition(pos);
                 _asteroidsController
                     .CreateAsteroid(AsteroidSize.Medium)
-                    .SetPosition.Execute(pos);
+                    .SetPosition(pos);
                 _asteroidsNum++;
                 break;
         }

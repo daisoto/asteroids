@@ -11,7 +11,7 @@ public class PlayerController: IDisposable
     private readonly SpaceshipController _spaceshipController;
     private readonly BlasterController _blasterController;
     
-    private IDisposable _observation;
+    private IDisposable _updateObservation;
     
     private Vector2 _moving => _inputManager.Move;
     private Vector2 _rotating => _inputManager.Look;
@@ -28,7 +28,7 @@ public class PlayerController: IDisposable
     
     public void Dispose()
     {
-        _observation?.Dispose();
+        _updateObservation?.Dispose();
     }
     
     public void SetActive(bool flag)
@@ -38,12 +38,12 @@ public class PlayerController: IDisposable
         if (flag)
             SetObservation();
         else
-            _observation?.Dispose();
+            _updateObservation?.Dispose();
     }
     
     private void SetObservation()
     {
-        _observation = Observable.EveryUpdate().Subscribe(_ =>
+        _updateObservation = Observable.EveryUpdate().Subscribe(_ =>
         {
             _spaceshipController.Move(_moving);
             _spaceshipController.Rotate(_rotating);

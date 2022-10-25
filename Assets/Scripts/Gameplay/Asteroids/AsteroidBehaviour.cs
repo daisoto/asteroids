@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Gameplay
 {
-public class AsteroidBehaviour: PositionableBehaviour
+public class AsteroidBehaviour: SpaceBehaviour
 {
     public int Damage { get; private set;}
     

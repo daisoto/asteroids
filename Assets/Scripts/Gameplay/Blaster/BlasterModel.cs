@@ -1,15 +1,18 @@
-﻿using UnityEngine;
-using Zenject;
+﻿using System;
+using UnityEngine;
+using UniRx;
 
 namespace Gameplay
 {
-public class BlasterModel: ITickable
+public class BlasterModel: IDisposable
 {
     public int Damage { get; }
     
     public float ProjectileSpeed { get; }
     
     private readonly float _firePeriod;
+    
+    private readonly IDisposable _updateObservation;
     
     private float _timer;
     
@@ -18,7 +21,14 @@ public class BlasterModel: ITickable
         Damage = damage;
         ProjectileSpeed = projectileSpeed;
         _firePeriod = 1f / fireRate;
+        
+        _updateObservation = Observable.EveryUpdate().Subscribe(_ =>
+        {
+            _timer += Time.deltaTime;
+        });
     }
+    
+    public void Dispose() => _updateObservation.Dispose();
     
     public bool CanFire()
     {
@@ -27,11 +37,6 @@ public class BlasterModel: ITickable
             _timer = 0;
         
         return canShoot;
-    }
-    
-    public void Tick()
-    {
-        _timer += Time.deltaTime;
     }
 }
 }

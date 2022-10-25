@@ -61,7 +61,7 @@ public class AsteroidsController: IDisposable
                 behaviour.SetSpeed(Vector2.one * speed);
             }));
         
-        _disposablesContainer.Add(model.SetPosition
+        _disposablesContainer.Add(model.Position
             .Subscribe(position =>
             {
                 behaviour.Position = position;

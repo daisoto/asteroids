@@ -2,7 +2,7 @@
 
 namespace Gameplay
 {
-public class ProjectileModel: PositionableModel, ISpeedProvider
+public class ProjectileModel: SpaceModel, ISpeedProvider
 {
     private readonly ISpeedProvider _speedProvider;
     

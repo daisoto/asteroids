@@ -2,7 +2,7 @@
 
 namespace Gameplay
 {
-public class AsteroidModel: PositionableModel, ISpeedProvider
+public class AsteroidModel: SpaceModel, ISpeedProvider
 {
     public int Damage { get; }
 

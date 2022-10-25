@@ -65,6 +65,7 @@ public class SpaceshipController: IInitializable, IDisposable
 
         _behaviour.SetTexture(_textureProvider.Get(data.Title));
         
+        _healthSubscription?.Dispose();
         _healthSubscription = _model.Health.Subscribe(health =>
         {
             _health.Value = health;
@@ -88,6 +89,8 @@ public class SpaceshipController: IInitializable, IDisposable
         
         _behaviour.Rotate(rotation);
     }
+    
+    public Quaternion GetRotation() => _behaviour.Rotation;
 
     public Vector3 GetBarrelPosition() =>  _behaviour.GetBarrelPosition();
     

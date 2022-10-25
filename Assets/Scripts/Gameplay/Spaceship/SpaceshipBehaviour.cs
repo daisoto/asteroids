@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Gameplay
 {
-public class SpaceshipBehaviour: PositionableBehaviour
+public class SpaceshipBehaviour: SpaceBehaviour
 {
     [SerializeField]
     private Renderer _renderer;
