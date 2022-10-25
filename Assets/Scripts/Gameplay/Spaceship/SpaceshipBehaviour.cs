@@ -50,9 +50,6 @@ public class SpaceshipBehaviour: MonoBehaviour
         transform.rotation = rotation;
     }
     
-    public void Move(Vector3 motion)
-    {
-        _rigidbody.velocity = motion; 
-    }
+    public void Move(Vector3 motion) => _rigidbody.velocity = motion;
 }
 }
