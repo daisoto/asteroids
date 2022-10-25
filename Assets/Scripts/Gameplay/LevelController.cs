@@ -8,6 +8,7 @@ namespace Gameplay
 public class LevelController: IInitializable, IDisposable
 {
     private readonly AsteroidsController _asteroidsController;
+    private readonly IScreenDepthProvider _screenDepthProvider;
     private readonly Camera _camera;
     private readonly SignalBus _signalBus;
     
@@ -15,11 +16,12 @@ public class LevelController: IInitializable, IDisposable
     private int _currentLevel;
     private Action<int> _onLevelFinished;
 
-    public LevelController(AsteroidsController asteroidsController, 
-        Camera camera, SignalBus signalBus)
+    public LevelController(AsteroidsController asteroidsController, Camera camera, 
+        IScreenDepthProvider screenDepthProvider, SignalBus signalBus)
     {
         _asteroidsController = asteroidsController;
         _camera = camera;
+        _screenDepthProvider = screenDepthProvider;
         _signalBus = signalBus;
     }
 
@@ -56,6 +58,7 @@ public class LevelController: IInitializable, IDisposable
                     .CreateAsteroid(size);
                 asteroid.UpdateSpeed();
                 asteroid.SetPosition(GetRandomPosition());
+                asteroid.Activate();
             }
         }
         
@@ -99,7 +102,9 @@ public class LevelController: IInitializable, IDisposable
     {
         var x = RandomUtils.GetFloat(0, Screen.width);
         var y = RandomUtils.GetFloat(0, Screen.height);
-        return _camera.ScreenToWorldPoint(new Vector2(x, y));
+        
+        return _camera.ScreenToWorldPoint(
+            new Vector3(x, y, _screenDepthProvider.GetDepth()));
     }
     
     private void CheckLevelFinished()

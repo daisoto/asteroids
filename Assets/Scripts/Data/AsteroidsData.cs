@@ -22,8 +22,6 @@ public class AsteroidsData: ScriptableObject,
     private int _maxAsteroidsNum;
     public int MaxAsteroidsNum => _maxAsteroidsNum;
     
-    private int _minLevel => 1;
-
     public AsteroidBehaviour Get(AsteroidSize size)
     {
         AsteroidBehaviour behaviour = null;

@@ -19,7 +19,7 @@ public class TotalAsteroidsProvider: ITotalAsteroidsProvider
         _levelsViewDataProvider = levelsViewDataProvider;
     }
     
-    public int Get(int level) 
+    public int GetTotalAsteroidsNum(int level) 
     {
         var lerp = Mathf.RoundToInt(
             Mathf.Lerp(_minAsteroidsNum, _maxAsteroidsNum, 

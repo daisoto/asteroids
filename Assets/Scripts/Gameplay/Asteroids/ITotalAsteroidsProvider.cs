@@ -2,6 +2,6 @@
 {
 public interface ITotalAsteroidsProvider
 {
-    int Get(int level);
+    int GetTotalAsteroidsNum(int level);
 }
 }

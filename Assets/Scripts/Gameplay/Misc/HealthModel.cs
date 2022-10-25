@@ -27,7 +27,7 @@ public class HealthModel
     
     public void DecreaseHealth(int damage)
     {
-        if (damage <= _health.Value)
+        if (damage >= _health.Value)
         {
             _health.Value = 0;
             _onDeath?.Invoke();

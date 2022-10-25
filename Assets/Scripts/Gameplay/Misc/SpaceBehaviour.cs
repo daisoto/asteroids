@@ -19,10 +19,10 @@ public class SpaceBehaviour: MonoBehaviour
         set => transform.rotation = value;
     }
     
-    public Vector3 Up => transform.up;
+    public Vector3 Forward => transform.forward;
     
     public void SetActive(bool flag) => gameObject.SetActive(flag);
     
-    public virtual void SetSpeed(Vector3 speed) => _rigidbody.velocity = speed;
+    public void SetSpeed(Vector3 speed) => _rigidbody.velocity = speed;
 }
 }

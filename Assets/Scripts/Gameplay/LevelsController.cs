@@ -84,7 +84,7 @@ public class LevelsController
         if (_levelsData.Count >= level)
             return _levelsData[level - 1];
         
-        var totalNum = _totalAsteroidsProvider.Get(level);
+        var totalNum = _totalAsteroidsProvider.GetTotalAsteroidsNum(level);
         var sizes = EnumUtils.GetValues<AsteroidSize>();
         var asteroidsNum = new Dictionary<AsteroidSize, int>();
         

@@ -36,15 +36,10 @@ public class SpaceshipBehaviour: SpaceBehaviour
         return this;
     }
 
-    public override void SetSpeed(Vector3 speed)
-    {
-        _trail.SetActive(speed != Vector3.zero);
-        base.SetSpeed(speed);
-    }
+    public void SetTrail(bool flag) => 
+        _trail.SetActive(flag);
 
-    public Vector3 GetBarrelPosition() => _barrel.position;
-
-    public void Rotate(Quaternion rotation) => transform.rotation = rotation;
     
+    public Vector3 GetBarrelPosition() => _barrel.position;
 }
 }

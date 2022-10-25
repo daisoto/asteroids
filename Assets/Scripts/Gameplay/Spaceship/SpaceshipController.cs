@@ -6,7 +6,8 @@ using Zenject;
 
 namespace Gameplay
 {
-public class SpaceshipController: IInitializable, IDisposable
+public class SpaceshipController: 
+    IInitializable, IDisposable, IScreenDepthProvider
 {
     private readonly SpaceshipBehaviour _behaviour;
     private readonly SignalBus _signalBus;
@@ -51,6 +52,9 @@ public class SpaceshipController: IInitializable, IDisposable
         _healthSubscription?.Dispose();
     }
     
+    public float GetDepth() => 
+        _camera.transform.position.y - _behaviour.Position.y;
+    
     private void SetData(SetSpaceshipDataSignal signal)
     {
         var data = signal.Data;
@@ -63,7 +67,7 @@ public class SpaceshipController: IInitializable, IDisposable
         _model = GetSpaceshipModel(data);
         _model.UpdateSpeed();
 
-        _behaviour.SetTexture(_textureProvider.Get(data.Title));
+        _behaviour.SetTexture(_textureProvider.GetTexture(data.Title));
         
         _healthSubscription?.Dispose();
         _healthSubscription = _model.Health.Subscribe(health =>
@@ -77,6 +81,7 @@ public class SpaceshipController: IInitializable, IDisposable
         var motion = _model.Speed.Value * delta;
         var speed = new Vector3(motion.x, 0, motion.y);
         _behaviour.SetSpeed(speed);
+        _behaviour.SetTrail(speed != Vector3.zero);
     }
     
     public void Rotate(Vector2 position)
@@ -87,7 +92,7 @@ public class SpaceshipController: IInitializable, IDisposable
         var relativePos = _behaviour.Position - targetPosition;
         var rotation = Quaternion.LookRotation(relativePos);
         
-        _behaviour.Rotate(rotation);
+        _behaviour.Rotation = rotation;
     }
     
     public Quaternion GetRotation() => _behaviour.Rotation;
@@ -103,8 +108,5 @@ public class SpaceshipController: IInitializable, IDisposable
         
         return new SpaceshipModel(healthModel, speedProvider);
     }
-    
-    private float GetDepth() => 
-        _camera.transform.position.y - _behaviour.Position.y;
 }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace Gameplay
@@ -7,9 +8,12 @@ public class AsteroidBehaviour: SpaceBehaviour
 {
     public int Damage { get; private set;}
     
+    [SerializeField]
+    private ParticleSystem _explosion;
+    
     private Action<int> _onDamage;
 
-    private void OnCollisionEnter(Collision other)
+    private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.TryGetComponent(out ProjectileBehaviour projectile))
             _onDamage?.Invoke(projectile.Damage);
@@ -27,6 +31,13 @@ public class AsteroidBehaviour: SpaceBehaviour
         Damage = damage;
         
         return this;
+    }
+    
+    public async UniTask ToggleExplosion()
+    {
+        _explosion.Play();
+        
+        await UniTask.WaitUntil(() => !_explosion.isPlaying);
     }
 }
 }

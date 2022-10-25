@@ -25,8 +25,9 @@ public class AsteroidsFactory: Factory<AsteroidModel, AsteroidSize>
     {
         var healthModel = new HealthModel(data.MaxHealth);
         var speedModel = new RandomSpeedModel(data.MaxSpeed, data.MinSpeed);
+        var model = new AsteroidModel(healthModel, speedModel, data.Damage);
         
-        return new AsteroidModel(healthModel, speedModel, data.Damage);
+        return model;
     }
 }
 }

@@ -24,7 +24,7 @@ public class SpaceshipsData : ScriptableObject, ITextureProvider
     public ProjectileBehaviour GetProjectileBehaviour() => 
         Instantiate(_projectileBehaviourPrefab);
 
-    public Texture2D Get(string id)
+    public Texture2D GetTexture(string id)
     {
         return (from td in _texturesData 
             where td.Id == id 

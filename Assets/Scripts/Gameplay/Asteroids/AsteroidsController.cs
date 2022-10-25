@@ -1,6 +1,7 @@
 using System;
 using UniRx;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using Zenject;
 
@@ -10,7 +11,8 @@ public class AsteroidsController: IDisposable
 {
     private readonly Dictionary<AsteroidSize, AsteroidsPool> _pools;
     
-    private readonly IFactory<AsteroidBehaviour, AsteroidSize> _behavioursFactory;
+    private readonly IFactory<AsteroidBehaviour, AsteroidSize> 
+        _behavioursFactory;
     private readonly IFactory<AsteroidModel, AsteroidSize> _modelsFactory;
     
     private readonly SignalBus _signalBus;
@@ -33,10 +35,13 @@ public class AsteroidsController: IDisposable
     
     public void Dispose() => _disposablesContainer.Dispose();
     
-    public AsteroidModel CreateAsteroid(AsteroidSize size) => _pools[size].Get();
+    public AsteroidModel CreateAsteroid(AsteroidSize size) => 
+        _pools[size].Get();
 
     private void CreateBehaviour(AsteroidModel model, AsteroidSize size)
     {
+        model.Activate();
+        
         var behaviour = _behavioursFactory
             .Get(size)
             .SetDamage(model.Damage)
@@ -45,20 +50,22 @@ public class AsteroidsController: IDisposable
         _disposablesContainer.Add(model.IsActive
             .Subscribe(isActive =>
             {
-                behaviour.SetActive(isActive);
-            
                 if (!isActive)
                 {
                     var position = behaviour.Position;
                     _pools[size].Return(model);
                     _signalBus.Fire(new AsteroidCollapseSignal(size, position));
+                    Explode(behaviour).Forget();
                 }
+                else
+                    behaviour.SetActive(true);
             }));
         
         _disposablesContainer.Add(model.Speed
             .Subscribe(speed =>
             {
-                behaviour.SetSpeed(Vector2.one * speed);
+                var moving = Vector3.forward + Vector3.right;
+                behaviour.SetSpeed(moving * speed);
             }));
         
         _disposablesContainer.Add(model.Position
@@ -91,5 +98,10 @@ public class AsteroidsController: IDisposable
     private AsteroidModel GetMediumModel() => _modelsFactory.Get(AsteroidSize.Medium);
     private AsteroidModel GetBigModel() => _modelsFactory.Get(AsteroidSize.Big);
     
+    private async UniTask Explode(AsteroidBehaviour behaviour)
+    {
+        await behaviour.ToggleExplosion();
+        behaviour.SetActive(false);
+    }
 }
 }

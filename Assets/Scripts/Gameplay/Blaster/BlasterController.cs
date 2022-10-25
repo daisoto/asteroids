@@ -72,8 +72,9 @@ public class BlasterController: IInitializable, IDisposable
     private ProjectileModel GetProjectileModel()
     {
         var uniformSpeedProvider = new UniformSpeedProvider(_model.ProjectileSpeed);
+        var model = new ProjectileModel(uniformSpeedProvider);
         
-        return new ProjectileModel(uniformSpeedProvider);
+        return model;
     }
     
     private IPool<ProjectileModel> GetProjectilesPool()
@@ -85,6 +86,8 @@ public class BlasterController: IInitializable, IDisposable
     
     private void CreateProjectileBehaviour(ProjectileModel model)
     {
+        model.Activate();
+        
         var behaviour = _projectileBehavioursFactory.Get();
         model.InitialRotation = behaviour.Rotation;
         
@@ -111,7 +114,7 @@ public class BlasterController: IInitializable, IDisposable
         
         _disposablesContainer.Add(model.Speed
             .Subscribe(speed =>
-                behaviour.SetSpeed(speed * -behaviour.Up)));
+                behaviour.SetSpeed(speed * -behaviour.Forward)));
     }
 }
 }

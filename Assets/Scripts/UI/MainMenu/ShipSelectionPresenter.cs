@@ -71,7 +71,7 @@ public class ShipSelectionPresenter: Presenter<ShipSelectionView>, IInitializabl
     private void SetSelected(int index)
     {
         _selectedData = _data[index];
-        _view.RepaintShip(_textureProvider.Get(_selectedData.Title))
+        _view.RepaintShip(_textureProvider.GetTexture(_selectedData.Title))
             .SetCharacteristics(
                 _selectedData.MaxHealth, 
                 _selectedData.Damage, 

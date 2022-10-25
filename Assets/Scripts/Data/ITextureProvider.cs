@@ -4,6 +4,6 @@ namespace Data
 {
 public interface ITextureProvider
 {
-    Texture2D Get(string id);
+    Texture2D GetTexture(string id);
 }
 }

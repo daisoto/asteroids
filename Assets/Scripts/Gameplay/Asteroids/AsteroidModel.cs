@@ -23,6 +23,7 @@ public class AsteroidModel: SpaceModel, ISpeedProvider
     
     public void UpdateSpeed() => _speedProvider.UpdateSpeed();
     
-    public void DecreaseHealth(int damage) => _healthModel.DecreaseHealth(damage);
+    public void DecreaseHealth(int damage) => 
+        _healthModel.DecreaseHealth(damage);
 }
 }
