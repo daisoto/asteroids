@@ -116,8 +116,10 @@ public class SpaceshipController:
     
     private async UniTask ExplodeInternal()
     {
+        _behaviour.SetBaseModel(false);
         await _behaviour.ToggleExplosion();
         _behaviour.SetActive(false);
+        _signalBus.Fire(new SpaceshipDestroyedSignal());
     }
 }
 }

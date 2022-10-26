@@ -45,7 +45,8 @@ public class AsteroidsController: IDisposable
         var behaviour = _behavioursFactory
             .Get(size)
             .SetDamage(model.Damage)
-            .SetOnDamage(model.DecreaseHealth);
+            .SetOnDamage(model.DecreaseHealth)
+            .SetOnCollide(model.Deactivate);
         
         _disposablesContainer.Add(model.IsActive
             .Subscribe(isActive =>
@@ -100,6 +101,7 @@ public class AsteroidsController: IDisposable
     
     private async UniTask Explode(AsteroidBehaviour behaviour)
     {
+        behaviour.SetBaseModel(false);
         await behaviour.ToggleExplosion();
         behaviour.SetActive(false);
     }

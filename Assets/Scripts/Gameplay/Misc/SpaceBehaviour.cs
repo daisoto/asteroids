@@ -5,6 +5,12 @@ namespace Gameplay
 public class SpaceBehaviour: MonoBehaviour
 {
     [SerializeField]
+    private GameObject _baseModel;
+    
+    [SerializeField]
+    private Collider _collider;
+    
+    [SerializeField]
     protected Rigidbody _rigidbody;
     
     public Vector3 Position
@@ -23,6 +29,12 @@ public class SpaceBehaviour: MonoBehaviour
     
     public void SetActive(bool flag) => gameObject.SetActive(flag);
     
+    public void SetBaseModel(bool flag) 
+    {
+        _collider.enabled = flag;
+        _baseModel.SetActive(flag);
+    }
+
     public void SetSpeed(Vector3 speed) => _rigidbody.velocity = speed;
 }
 }

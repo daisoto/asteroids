@@ -57,8 +57,9 @@ public class LevelController: IInitializable, IDisposable
                 var asteroid = _asteroidsController
                     .CreateAsteroid(size);
                 asteroid.UpdateSpeed();
-                asteroid.SetPosition(GetRandomPosition());
-                asteroid.Activate();
+                asteroid
+                    .SetPosition(GetRandomPosition())
+                    .Activate();
             }
         }
         

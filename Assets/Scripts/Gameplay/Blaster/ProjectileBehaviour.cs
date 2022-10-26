@@ -23,7 +23,7 @@ public class ProjectileBehaviour: SpaceBehaviour
         return this;
     }
     
-    private void OnCollisionEnter(Collision other) // todo стены
+    private void OnTriggerEnter(Collider other) // todo стены
     {
         if (other.gameObject.TryGetComponent(out AsteroidBehaviour asteroid))
             _onCollision?.Invoke();
