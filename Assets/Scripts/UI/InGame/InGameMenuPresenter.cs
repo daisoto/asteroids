@@ -25,27 +25,21 @@ public class InGameMenuPresenter: Presenter<InGameMenuView>, IInitializable
 
     public void Initialize()
     {
-        
-        _view
-            .OnContinue(Resume)
-            .OnExit(Exit) 
-            .SetOnShow(Pause);
+        _view 
+            .SetOnShowMenu(Pause)
+            .SetOnContinue(Resume)
+            .SetOnExit(Exit);
     }
     
     private void Exit()
     {
+        _view.CloseMenu();
         Close();
         _onExit?.Invoke();
     }
     
-    private void Resume()
-    {
-        _signalBus.Fire(new ResumeGameSignal());
-    }
+    private void Resume() => _signalBus.Fire(new ResumeGameSignal());
     
-    private void Pause()
-    {
-        _signalBus.Fire(new PauseGameSignal());
-    }
+    private void Pause() => _signalBus.Fire(new PauseGameSignal());
 }
 }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using Zenject;
 using Data;
@@ -8,31 +10,39 @@ namespace Gameplay
 public class LevelController: IInitializable, IDisposable
 {
     private readonly AsteroidsController _asteroidsController;
-    private readonly IScreenDepthProvider _screenDepthProvider;
-    private readonly Camera _camera;
+    private readonly IWorldPointProvider _worldPointProvider;
     private readonly SignalBus _signalBus;
+    
+    private readonly List<AsteroidModel> _sleepingAsteroidModels;
+    private readonly List<AsteroidModel> _activeAsteroidModels;
     
     private int _asteroidsNum; 
     private int _currentLevel;
+    private float _delay;
+    private bool _isPlaying;
     private Action<int> _onLevelFinished;
 
-    public LevelController(AsteroidsController asteroidsController, Camera camera, 
-        IScreenDepthProvider screenDepthProvider, SignalBus signalBus)
+    public LevelController(AsteroidsController asteroidsController, 
+        IWorldPointProvider worldPointProvider, SignalBus signalBus)
     {
         _asteroidsController = asteroidsController;
-        _camera = camera;
-        _screenDepthProvider = screenDepthProvider;
+        _worldPointProvider = worldPointProvider;
         _signalBus = signalBus;
+        
+        _sleepingAsteroidModels = new List<AsteroidModel>();
+        _activeAsteroidModels = new List<AsteroidModel>();
     }
 
     public void Initialize()
     {
         _signalBus.Subscribe<AsteroidCollapseSignal>(ProcessCollapse);
+        _signalBus.Subscribe<SpaceshipDestroyedSignal>(StopPlaying);
     }
     
     public void Dispose()
     {
         _signalBus.Unsubscribe<AsteroidCollapseSignal>(ProcessCollapse);
+        _signalBus.Subscribe<SpaceshipDestroyedSignal>(StopPlaying);
     }
     
     public LevelController SetOnLevelFinished(Action<int> onLevelFinished)
@@ -42,8 +52,17 @@ public class LevelController: IInitializable, IDisposable
         return this;
     }
     
+    public LevelController SetDelay(float delay)
+    {
+        _delay = delay;
+        
+        return this;
+    }
+    
     public void StartLevel(LevelData levelData)
     {
+        _isPlaying = true;
+        DeactivateRemaining();
         _asteroidsNum = 0;
         _currentLevel = levelData.Level;
         var sizes = EnumUtils.GetValues<AsteroidSize>();
@@ -56,20 +75,47 @@ public class LevelController: IInitializable, IDisposable
             {
                 var asteroid = _asteroidsController
                     .CreateAsteroid(size);
-                asteroid.UpdateSpeed();
-                asteroid
-                    .SetPosition(GetRandomPosition())
-                    .Activate();
+                _sleepingAsteroidModels.Add(asteroid);
             }
         }
         
         _signalBus.Fire(new ResumeGameSignal());
+        LevelSequence().Forget();
+    }
+    
+    private void StopPlaying() => _isPlaying = false;
+    
+    private void DeactivateRemaining() => 
+        _activeAsteroidModels.ForEach(a => a.Deactivate());
+    
+    private async UniTask LevelSequence()
+    {
+        while (_isPlaying && _sleepingAsteroidModels.Count > 0)
+        {
+            await UniTask.Delay(TimeSpan.FromSeconds(_delay)); 
+        
+            var asteroid = _sleepingAsteroidModels.PickRandom();
+            _sleepingAsteroidModels.Remove(asteroid);
+            
+            SetAsteroid(asteroid, GetRandomPosition());
+        }
+    }
+    
+    private void SetAsteroid(AsteroidModel asteroid, Vector3 position)
+    {
+        asteroid
+            .SetPosition(position)
+            .Activate();
+        _activeAsteroidModels.Add(asteroid);
     }
 
     private void ProcessCollapse(AsteroidCollapseSignal signal)
     {
         var size = signal.Size;
         var pos = signal.Position;
+        
+        if (!_isPlaying)
+            return;
         
         // Todo to different classes?
         switch (size)
@@ -79,21 +125,17 @@ public class LevelController: IInitializable, IDisposable
                 CheckLevelFinished();
                 break;
             case AsteroidSize.Medium:
-                _asteroidsController
-                    .CreateAsteroid(AsteroidSize.Small)
-                    .SetPosition(pos);
-                _asteroidsController
-                    .CreateAsteroid(AsteroidSize.Small)
-                    .SetPosition(pos);
+                SetAsteroid(_asteroidsController
+                    .CreateAsteroid(AsteroidSize.Small), pos);
+                SetAsteroid(_asteroidsController
+                    .CreateAsteroid(AsteroidSize.Small), pos);
                 _asteroidsNum++;
                 break;
             case AsteroidSize.Big:
-                _asteroidsController
-                    .CreateAsteroid(AsteroidSize.Medium)
-                    .SetPosition(pos);
-                _asteroidsController
-                    .CreateAsteroid(AsteroidSize.Medium)
-                    .SetPosition(pos);
+                SetAsteroid(_asteroidsController
+                    .CreateAsteroid(AsteroidSize.Medium), pos);
+                SetAsteroid(_asteroidsController
+                    .CreateAsteroid(AsteroidSize.Medium), pos);
                 _asteroidsNum++;
                 break;
         }
@@ -104,8 +146,7 @@ public class LevelController: IInitializable, IDisposable
         var x = RandomUtils.GetFloat(0, Screen.width);
         var y = RandomUtils.GetFloat(0, Screen.height);
         
-        return _camera.ScreenToWorldPoint(
-            new Vector3(x, y, _screenDepthProvider.GetDepth()));
+        return _worldPointProvider.GetFromScreen(new Vector2(x, y));
     }
     
     private void CheckLevelFinished()
@@ -113,6 +154,7 @@ public class LevelController: IInitializable, IDisposable
         if (_asteroidsNum == 0)
         {
             _signalBus.Fire(new PauseGameSignal());
+            _signalBus.Fire(new LevelPassedSignal());
             _onLevelFinished?.Invoke(_currentLevel);
         }
     }

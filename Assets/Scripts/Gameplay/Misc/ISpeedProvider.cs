@@ -1,11 +1,12 @@
 ﻿using UniRx;
+using UnityEngine;
 
 namespace Gameplay
 {
 public interface ISpeedProvider
 {
-    public IReadOnlyReactiveProperty<float> Speed { get; }
+    public IReadOnlyReactiveProperty<Vector3> Speed { get; }
     
-    void UpdateSpeed();
+    void UpdateSpeed(Vector3 direction);
 }
 }

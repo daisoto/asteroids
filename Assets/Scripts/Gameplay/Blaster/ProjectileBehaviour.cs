@@ -23,9 +23,9 @@ public class ProjectileBehaviour: SpaceBehaviour
         return this;
     }
     
-    private void OnTriggerEnter(Collider other) // todo стены
+    private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.TryGetComponent(out AsteroidBehaviour asteroid))
+        if (!other.gameObject.TryGetComponent(out SpaceshipBehaviour spaceship))
             _onCollision?.Invoke();
     }
 }

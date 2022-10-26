@@ -14,8 +14,10 @@ public class Exploder
     {
         _explosion.Play();
         
-        await UniTask.WaitUntil(() => !_explosion.isPlaying);
+        await UniTask.WaitUntil(HasStoppedExploding);
     }
-        
+    
+    private bool HasStoppedExploding() => 
+        _explosion == null || !_explosion.isPlaying;
 }
 }

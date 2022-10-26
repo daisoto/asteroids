@@ -40,15 +40,18 @@ public class AsteroidsController: IDisposable
 
     private void CreateBehaviour(AsteroidModel model, AsteroidSize size)
     {
-        model.Activate();
-        
         var behaviour = _behavioursFactory
             .Get(size)
             .SetDamage(model.Damage)
             .SetOnDamage(model.DecreaseHealth)
             .SetOnCollide(model.Deactivate);
         
+        model.SetOnDamage(behaviour.ToggleExplosion);
+        
+        behaviour.SetActive(false);
+        
         _disposablesContainer.Add(model.IsActive
+            .SkipLatestValueOnSubscribe()
             .Subscribe(isActive =>
             {
                 if (!isActive)
@@ -59,21 +62,22 @@ public class AsteroidsController: IDisposable
                     Explode(behaviour).Forget();
                 }
                 else
+                {
+                    behaviour.SetBaseModel(true);
                     behaviour.SetActive(true);
+                    var horizontal = RandomUtils.ProcessProbability(0.5) ?
+                        Vector3.right : Vector3.left;
+                    var vertical = RandomUtils.ProcessProbability(0.5) ? 
+                        Vector3.forward : Vector3.back;
+                    model.UpdateSpeed(vertical + horizontal);
+                }
             }));
         
         _disposablesContainer.Add(model.Speed
-            .Subscribe(speed =>
-            {
-                var moving = Vector3.forward + Vector3.right;
-                behaviour.SetSpeed(moving * speed);
-            }));
+            .Subscribe(speed => behaviour.SetSpeed(speed)));
         
         _disposablesContainer.Add(model.Position
-            .Subscribe(position =>
-            {
-                behaviour.Position = position;
-            })); 
+            .Subscribe(position => behaviour.Position = position)); 
     }
     
     private Dictionary<AsteroidSize, AsteroidsPool> GetPools()
@@ -102,8 +106,9 @@ public class AsteroidsController: IDisposable
     private async UniTask Explode(AsteroidBehaviour behaviour)
     {
         behaviour.SetBaseModel(false);
-        await behaviour.ToggleExplosion();
-        behaviour.SetActive(false);
+        await behaviour.ToggleExplosionAsync();
+        if (behaviour)
+            behaviour.SetActive(false);
     }
 }
 }

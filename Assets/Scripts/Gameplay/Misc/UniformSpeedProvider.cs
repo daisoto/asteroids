@@ -1,21 +1,22 @@
 ﻿using UniRx;
+using UnityEngine;
 
 namespace Gameplay
 {
 public class UniformSpeedProvider: ISpeedProvider
 {
-    public IReadOnlyReactiveProperty<float> Speed => _speed;
-    private readonly ReactiveProperty<float> _speed;
+    public IReadOnlyReactiveProperty<Vector3> Speed => _speed;
+    private readonly ReactiveProperty<Vector3> _speed;
     
     private readonly float _speedInternal;
     
     public UniformSpeedProvider(float speed)
     {
-        _speed = new ReactiveProperty<float>();
+        _speed = new ReactiveProperty<Vector3>();
         _speedInternal = speed;
     }
     
-    public void UpdateSpeed() => 
-        _speed.SetValueAndForceNotify(_speedInternal);
+    public void UpdateSpeed(Vector3 direction) => 
+        _speed.SetValueAndForceNotify(direction * _speedInternal);
 }
 }

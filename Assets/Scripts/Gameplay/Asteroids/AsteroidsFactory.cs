@@ -4,17 +4,17 @@ namespace Gameplay
 {
 public class AsteroidsFactory: Factory<AsteroidModel, AsteroidSize>
 {
-    private readonly AsteroidsData _data;
-    public AsteroidsFactory(AsteroidsData data)
+    private readonly AsteroidsSettings _settings;
+    public AsteroidsFactory(AsteroidsSettings settings)
     {
-        _data = data;
+        _settings = settings;
     }
 
     protected override AsteroidModel Create(AsteroidSize size)
     {
         AsteroidModel model = default;
         
-        foreach (var aData in _data.Data)
+        foreach (var aData in _settings.Data)
             if (aData.Size == size)
                 model = CreateModel(aData);
         

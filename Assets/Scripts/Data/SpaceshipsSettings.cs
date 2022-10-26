@@ -7,7 +7,7 @@ using Gameplay;
 namespace Data
 {
 [CreateAssetMenu(fileName = "New SpaceshipsData", menuName = "Spaceships data")]
-public class SpaceshipsData : ScriptableObject, ITextureProvider
+public class SpaceshipsSettings : ScriptableObject, ITextureProvider
 {
     [SerializeField]
     private SpaceshipData[] _spaceShipsData;

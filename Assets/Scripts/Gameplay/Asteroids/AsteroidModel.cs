@@ -1,15 +1,19 @@
-﻿using UniRx;
+﻿using System;
+using UniRx;
+using UnityEngine;
 
 namespace Gameplay
 {
-public class AsteroidModel: SpaceModel, ISpeedProvider
+public class AsteroidModel: SpaceModel
 {
     public int Damage { get; }
 
     private readonly HealthModel _healthModel;
     private readonly ISpeedProvider _speedProvider;
     
-    public IReadOnlyReactiveProperty<float> Speed => _speedProvider.Speed;
+    public IReadOnlyReactiveProperty<Vector3> Speed => _speedProvider.Speed;
+    
+    private Action _onDamage;
     
     public AsteroidModel(HealthModel healthModel,  
         ISpeedProvider speedProvider, int damage)
@@ -21,9 +25,19 @@ public class AsteroidModel: SpaceModel, ISpeedProvider
         _healthModel.SetOnDeath(Deactivate);
     }
     
-    public void UpdateSpeed() => _speedProvider.UpdateSpeed();
+    public AsteroidModel SetOnDamage(Action onDamage)
+    {
+        _onDamage = onDamage;
+        
+        return this;
+    }
     
-    public void DecreaseHealth(int damage) => 
+    public void UpdateSpeed(Vector3 dir) => _speedProvider.UpdateSpeed(dir);
+    
+    public void DecreaseHealth(int damage)
+    {
         _healthModel.DecreaseHealth(damage);
+        _onDamage?.Invoke();
+    }
 }
 }

@@ -31,6 +31,13 @@ public class MainMenuPresenter: Presenter<MainMenuView>, IInitializable
             .OnExit(Exit);
     }
     
+    public MainMenuPresenter Update()
+    {
+        _view.SetContinue(CheckSave());
+        
+        return this;
+    }
+    
     public MainMenuPresenter SetOnNewGame(Action onNewGame)
     {
         _onNewGame = onNewGame;

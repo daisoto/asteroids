@@ -13,13 +13,13 @@ namespace Core
 public class ProjectInstaller : MonoInstaller
 {
     [SerializeField]
-    private SpaceshipsData _spaceshipsData;
+    private SpaceshipsSettings _spaceshipsSettings;
     
     [SerializeField]
-    private AsteroidsData _asteroidsData;
+    private AsteroidsSettings _asteroidsSettings;
     
     [SerializeField]
-    private LevelsData _levelsData;
+    private LevelsSettings _levelsSettings;
 
     public override void InstallBindings()
     {
@@ -44,12 +44,12 @@ public class ProjectInstaller : MonoInstaller
     
     private void BindSpaceship()
     {
-        Container.BindInterfacesAndSelfTo<SpaceshipsData>()
-            .FromInstance(_spaceshipsData);
+        Container.BindInterfacesAndSelfTo<SpaceshipsSettings>()
+            .FromInstance(_spaceshipsSettings);
         
         Container.BindInterfacesAndSelfTo<IFactory<ProjectileBehaviour>>()
             .FromInstance(new Factory<ProjectileBehaviour>(
-                _spaceshipsData.GetProjectileBehaviour));
+                _spaceshipsSettings.GetProjectileBehaviour));
         
         Container.BindInterfacesAndSelfTo<SpaceshipDataManager>()
             .AsSingle()
@@ -86,6 +86,10 @@ public class ProjectInstaller : MonoInstaller
             .AsSingle()
             .NonLazy();
         
+        Container.BindInterfacesAndSelfTo<EndGamePresenter>()
+            .AsSingle()
+            .NonLazy();
+        
         Container.BindInterfacesAndSelfTo<UIManager>()
             .AsSingle()
             .NonLazy();
@@ -93,8 +97,8 @@ public class ProjectInstaller : MonoInstaller
     
     private void BindLevels()
     {
-        Container.BindInterfacesAndSelfTo<LevelsData>()
-            .FromInstance(_levelsData);
+        Container.BindInterfacesAndSelfTo<LevelsSettings>()
+            .FromInstance(_levelsSettings);
         
         Container.BindInterfacesAndSelfTo<LevelsDataManager>()
             .AsSingle()
@@ -111,29 +115,23 @@ public class ProjectInstaller : MonoInstaller
     
     private void BindAsteroids()
     {
-        Container.BindInterfacesAndSelfTo<AsteroidsData>()
-            .FromInstance(_asteroidsData);
+        Container.BindInterfacesAndSelfTo<AsteroidsSettings>()
+            .FromInstance(_asteroidsSettings);
         
         Container.BindInterfacesTo<AsteroidsFactory>()
             .AsSingle();
         
         Container.Bind<AsteroidsNumProvider>()
             .WithId(AsteroidSize.Small)
-            .To<SmallAsteroidsNumProvider>()
-            .AsSingle()
+            .FromInstance(new SmallAsteroidsNumProvider(_levelsSettings.MaxLevel))
             .NonLazy();
 
         Container.Bind<AsteroidsNumProvider>()
             .WithId(AsteroidSize.Medium)
-            .To<MediumAsteroidsNumProvider>()
-            .AsSingle()
+            .FromInstance(new MediumAsteroidsNumProvider(_levelsSettings.MaxLevel))
             .NonLazy();
         
         Container.BindInterfacesAndSelfTo<AsteroidsController>()
-            .AsSingle()
-            .NonLazy();
-        
-        Container.BindInterfacesAndSelfTo<TotalAsteroidsProvider>()
             .AsSingle()
             .NonLazy();
     }

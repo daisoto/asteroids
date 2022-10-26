@@ -47,7 +47,9 @@ public class AsteroidBehaviour: SpaceBehaviour
         return this;
     }
     
-    public async UniTask ToggleExplosion() => 
+    public void ToggleExplosion() => ToggleExplosionAsync().Forget();
+
+    public async UniTask ToggleExplosionAsync() => 
         await _exploder.ToggleExplosion();
 }
 }

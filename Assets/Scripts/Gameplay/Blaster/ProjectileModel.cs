@@ -1,18 +1,19 @@
 ﻿using UniRx;
+using UnityEngine;
 
 namespace Gameplay
 {
-public class ProjectileModel: SpaceModel, ISpeedProvider
+public class ProjectileModel: SpaceModel
 {
     private readonly ISpeedProvider _speedProvider;
     
-    public IReadOnlyReactiveProperty<float> Speed => _speedProvider.Speed;
+    public IReadOnlyReactiveProperty<Vector3> Speed => _speedProvider.Speed;
     
     public ProjectileModel(ISpeedProvider speedProvider)
     {
         _speedProvider = speedProvider;
     }
     
-    public void UpdateSpeed() => _speedProvider.UpdateSpeed();
+    public void UpdateSpeed(Vector3 dir) => _speedProvider.UpdateSpeed(dir);
 }
 }

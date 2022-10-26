@@ -1,4 +1,6 @@
-﻿namespace UI
+﻿using System;
+
+namespace UI
 {
 public abstract class Presenter<T> where T: View
 {
@@ -11,5 +13,19 @@ public abstract class Presenter<T> where T: View
 
     public virtual void Show() => _view.Show();
     public virtual void Close() => _view.Close();
+    
+    public Presenter<T> SetOnShow(Action onShow)
+    {
+        _view.SetOnShow(onShow);
+        
+        return this;
+    }
+    
+    public Presenter<T> SetOnClose(Action onClose)
+    {
+        _view.SetOnClose(onClose);
+        
+        return this;
+    }
 }
 }

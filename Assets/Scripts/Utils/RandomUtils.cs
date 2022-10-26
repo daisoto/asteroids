@@ -7,23 +7,21 @@ public static class RandomUtils
     /// <summary>
     /// Includes both borders
     /// </summary>
-    public static float GetFloat(float min, float max)
-    {
-        return (float)R.NextDouble() * (max - min) + min;
-    }
+    public static float GetFloat(float min, float max) =>
+        (float)R.NextDouble() * (max - min) + min;
     
     /// <summary>
     /// Includes both borders
     /// </summary>
-    public static int GetInt(int min, int max)
-    {
-        return R.Next(min, max + 1);
-    }
+    public static int GetInt(int min, int max) =>
+        R.Next(min, max + 1);
     
-    public static T PickRandom<T>(this IList<T> source)
-    {
-        int index = R.Next(source.Count);
-        
-        return source[index];
-    }
+    /// <summary>
+    /// <param name="prob"> must be from 0 to 1</param>
+    /// </summary>
+    public static bool ProcessProbability(double prob) =>
+        R.NextDouble() < prob;
+    
+    public static T PickRandom<T>(this IList<T> source) => 
+        source[R.Next(source.Count)];
 }

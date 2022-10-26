@@ -5,9 +5,7 @@ namespace Gameplay
 {
 public class MediumAsteroidsNumProvider: AsteroidsNumProvider
 {
-    public MediumAsteroidsNumProvider(
-        ILevelsViewDataProvider levelsViewDataProvider) : 
-        base(levelsViewDataProvider) { }
+    public MediumAsteroidsNumProvider(int maxLevel) : base(maxLevel) { }
     
     public override int GetNum(int level, int maxNum)
     {

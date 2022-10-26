@@ -1,13 +1,10 @@
 ﻿using UnityEngine;
-using Data;
 
 namespace Gameplay
 {
 public class SmallAsteroidsNumProvider: AsteroidsNumProvider
 {
-    public SmallAsteroidsNumProvider(
-        ILevelsViewDataProvider levelsViewDataProvider) : 
-        base(levelsViewDataProvider) { }
+    public SmallAsteroidsNumProvider(int maxLevel) : base(maxLevel) { }
     
     public override int GetNum(int level, int maxNum)
     {

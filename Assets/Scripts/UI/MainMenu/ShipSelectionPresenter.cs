@@ -18,14 +18,14 @@ public class ShipSelectionPresenter: Presenter<ShipSelectionView>, IInitializabl
     
     private SpaceshipData _selectedData;
     
-    public ShipSelectionPresenter(SpaceshipsData data, 
+    public ShipSelectionPresenter(SpaceshipsSettings settings, 
         ShipSelectionView view, SignalBus signalBus, 
         ITextureProvider textureProvider): base(view)
     {
         _signalBus = signalBus;
         _textureProvider = textureProvider;
-        _data = data.Data;
-        _maxValue = data.MaxValue;
+        _data = settings.Data;
+        _maxValue = settings.MaxValue;
     }
     
     public void Initialize()

@@ -5,16 +5,16 @@ namespace Gameplay
 {
 public class HealthModel
 {
-    public int MaxHealth { get; }
-    
     private readonly ReactiveProperty<int> _health;
     public IReadOnlyReactiveProperty<int> Health => _health;
+    
+    private readonly int _maxHealth;
     
     private Action _onDeath;
     
     public HealthModel(int maxHealth)
     {
-        MaxHealth = maxHealth;
+        _maxHealth = maxHealth;
         _health = new ReactiveProperty<int>(maxHealth);
     }
     
@@ -24,6 +24,8 @@ public class HealthModel
         
         return this;
     }
+    
+    public void Restore() => _health.Value = _maxHealth;
     
     public void DecreaseHealth(int damage)
     {

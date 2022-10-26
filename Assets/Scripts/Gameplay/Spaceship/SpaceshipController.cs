@@ -7,40 +7,49 @@ using Zenject;
 
 namespace Gameplay
 {
-public class SpaceshipController: 
-    IInitializable, IDisposable, IScreenDepthProvider
+public class SpaceshipController: IInitializable, IDisposable
 {
     private readonly SpaceshipBehaviour _behaviour;
     private readonly SignalBus _signalBus;
     private readonly SpaceshipDataManager _spaceshipDataManager;
-    private readonly Camera _camera;
     private readonly ITextureProvider _textureProvider;
-
-    private SpaceshipModel _model;
+    private readonly IWorldPointProvider _worldPointProvider;
     
     public IReadOnlyReactiveProperty<int> Health => _health;
     private readonly ReactiveProperty<int> _health;
     public IReadOnlyReactiveProperty<int> MaxHealth => _maxHealth;
     private readonly ReactiveProperty<int> _maxHealth;
     
-    private IDisposable _healthSubscription;
+    private readonly DisposablesContainer _disposablesContainer;
+    
+    private readonly Vector3 _initialPosition;
+    private readonly Quaternion _initialRotation;
+    
+    private SpaceshipModel _model;
+    private Action _onExplosion;
 
     public SpaceshipController(SpaceshipBehaviour behaviour, 
         SignalBus signalBus, SpaceshipDataManager spaceshipDataManager, 
-        ITextureProvider textureProvider, Camera camera)
+        ITextureProvider textureProvider,
+        IWorldPointProvider worldPointProvider)
     {
         _behaviour = behaviour;
         _signalBus = signalBus;
         _spaceshipDataManager = spaceshipDataManager;
         _textureProvider = textureProvider;
-        _camera = camera;
+        _worldPointProvider = worldPointProvider;
         
+        _initialPosition = behaviour.Position;
+        _initialRotation = behaviour.Rotation;
+
         _health = new ReactiveProperty<int>();
         _maxHealth = new ReactiveProperty<int>();
+        _disposablesContainer = new DisposablesContainer();
     }
 
     public void Initialize()
-    {
+    {        
+        _signalBus.Subscribe<LevelStartedSignal>(Activate);
         _signalBus.Subscribe<SetSpaceshipDataSignal>(SetData);
         
         _behaviour
@@ -49,12 +58,38 @@ public class SpaceshipController:
     
     public void Dispose()
     {
+        _signalBus.Unsubscribe<LevelStartedSignal>(Activate);
         _signalBus.Unsubscribe<SetSpaceshipDataSignal>(SetData);
-        _healthSubscription?.Dispose();
+        _disposablesContainer.Dispose();
     }
     
-    public float GetDepth() => 
-        _camera.transform.position.y - _behaviour.Position.y;
+    public SpaceshipController SetOnExplosion(Action onExplosion)
+    {
+        _onExplosion = onExplosion;
+        
+        return this;
+    }
+    
+    public void Move(Vector2 delta)
+    {
+        var motion = new Vector3(delta.x, 0, delta.y);
+        _model.UpdateSpeed(motion);
+    }
+    
+    public void Rotate(Vector2 position)
+    {
+        var targetPosition = _worldPointProvider.GetFromScreen(position);
+        var relativePos = _model.Position.Value - targetPosition;
+        var rotation = Quaternion.LookRotation(relativePos);
+        
+        _model.SetRotation(rotation);
+    }
+    
+    public Quaternion GetRotation() => _model.Rotation.Value;
+
+    public Vector3 GetBarrelPosition() =>  _behaviour.GetBarrelPosition();
+    
+    private void ReceiveDamage(int damage) => _model.DecreaseHealth(damage); 
     
     private void SetData(SetSpaceshipDataSignal signal)
     {
@@ -66,41 +101,24 @@ public class SpaceshipController:
         _maxHealth.Value = data.MaxHealth;
         
         _model = GetSpaceshipModel(data);
-        _model.UpdateSpeed();
 
         _behaviour.SetTexture(_textureProvider.GetTexture(data.Title));
         
-        _healthSubscription?.Dispose();
-        _healthSubscription = _model.Health.Subscribe(health =>
-        {
-            _health.Value = health;
-        });
-    }
-    
-    public void Move(Vector2 delta)
-    {
-        var motion = _model.Speed.Value * delta;
-        var speed = new Vector3(motion.x, 0, motion.y);
-        _behaviour.SetSpeed(speed);
-        _behaviour.SetTrail(speed != Vector3.zero);
-    }
-    
-    public void Rotate(Vector2 position)
-    {
-        var targetPosition = _camera.ScreenToWorldPoint(
-            new Vector3(position.x, position.y, GetDepth()));
+        _disposablesContainer.Dispose();
         
-        var relativePos = _behaviour.Position - targetPosition;
-        var rotation = Quaternion.LookRotation(relativePos);
-        
-        _behaviour.Rotation = rotation;
+        _disposablesContainer.Add(_model.Health
+            .Subscribe(health => _health.Value = health));
+        _disposablesContainer.Add(_model.Position
+            .Subscribe(pos => _behaviour.Position = pos));
+        _disposablesContainer.Add(_model.Rotation
+            .Subscribe(rot => _behaviour.Rotation = rot));
+        _disposablesContainer.Add(_model.Speed
+            .Subscribe(speed =>
+            {
+                _behaviour.SetTrail(speed != Vector3.zero);
+                _behaviour.SetSpeed(speed);
+            }));
     }
-    
-    public Quaternion GetRotation() => _behaviour.Rotation;
-
-    public Vector3 GetBarrelPosition() =>  _behaviour.GetBarrelPosition();
-    
-    private void ReceiveDamage(int damage) => _model.DecreaseHealth(damage); 
     
     private SpaceshipModel GetSpaceshipModel(SpaceshipData data)
     {
@@ -111,11 +129,22 @@ public class SpaceshipController:
         return new SpaceshipModel(healthModel, speedProvider);
     }
     
-    private void Explode() => 
+    private void Activate()
+    {
+        _model.Restore()
+            .SetPosition(_initialPosition)
+            .SetRotation(_initialRotation);
+        
+        _behaviour.SetBaseModel(true);
+        _behaviour.SetActive(true);
+    }
+    
+    private void Explode() =>
         ExplodeInternal().Forget();
     
     private async UniTask ExplodeInternal()
     {
+        _onExplosion?.Invoke();
         _behaviour.SetBaseModel(false);
         await _behaviour.ToggleExplosion();
         _behaviour.SetActive(false);

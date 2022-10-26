@@ -1,11 +1,12 @@
 ﻿using UniRx;
+using UnityEngine;
 
 namespace Gameplay
 {
 public class RandomSpeedModel: ISpeedProvider
 {
-    private readonly ReactiveProperty<float> _speed;
-    public IReadOnlyReactiveProperty<float> Speed => _speed;
+    private readonly ReactiveProperty<Vector3> _speed;
+    public IReadOnlyReactiveProperty<Vector3> Speed => _speed;
 
     private readonly float _maxSpeed;
     private readonly float _minSpeed;
@@ -15,10 +16,10 @@ public class RandomSpeedModel: ISpeedProvider
         _maxSpeed = maxSpeed;
         _minSpeed = minSpeed;
         
-        _speed = new ReactiveProperty<float>();
+        _speed = new ReactiveProperty<Vector3>();
     }
 
-    public void UpdateSpeed() => 
-        _speed.Value = RandomUtils.GetFloat(_minSpeed, _maxSpeed);
+    public void UpdateSpeed(Vector3 direction) => 
+        _speed.Value = direction * RandomUtils.GetFloat(_minSpeed, _maxSpeed);
 }
 }

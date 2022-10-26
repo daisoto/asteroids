@@ -6,7 +6,7 @@ using Gameplay;
 namespace Data
 {
 [CreateAssetMenu(fileName = "New AsteroidsData", menuName = "Asteroids data")]
-public class AsteroidsData: ScriptableObject, 
+public class AsteroidsSettings: ScriptableObject, 
     IFactory<AsteroidBehaviour, AsteroidSize>
 {
     [SerializeField]

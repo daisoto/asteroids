@@ -11,25 +11,28 @@ namespace UI
 {
 public class MapPresenter: Presenter<MapView>, IInitializable, IDisposable
 {
+    private readonly LevelsSettings _levelsSettings;
     private readonly LevelsController _levelsController;
-    private readonly ILevelsViewDataProvider _levelsViewDataProvider;
+    private readonly SignalBus _signalBus;
     
     private readonly List<PlanetModel> _models;
     private readonly DisposablesContainer _disposablesContainer;
     
     private Action _onBack;
+    private Action _onPlanetChose;
 
-    private Color _finishedColor => _levelsViewDataProvider.FinishedColor; 
-    private Color _openedColor => _levelsViewDataProvider.OpenedColor; 
-    private Color _closedColor => _levelsViewDataProvider.ClosedColor; 
+    private Color _finishedColor => _levelsSettings.FinishedColor; 
+    private Color _openedColor => _levelsSettings.OpenedColor; 
+    private Color _closedColor => _levelsSettings.ClosedColor; 
     
     public MapPresenter(MapView view, 
         LevelsController levelsController, 
-        ILevelsViewDataProvider levelsViewDataProvider) : base(view)
+        LevelsSettings levelsSettings, SignalBus signalBus) : base(view)
     {
         _levelsController = levelsController;
-        _levelsViewDataProvider = levelsViewDataProvider;
-        
+        _levelsSettings = levelsSettings;
+        _signalBus = signalBus;
+
         _disposablesContainer = new DisposablesContainer();
         _models = new List<PlanetModel>();
     }
@@ -42,16 +45,27 @@ public class MapPresenter: Presenter<MapView>, IInitializable, IDisposable
         _view
             .SetOnBack(Back);
         
-        _levelsController
-            .SetOnLevelStart(Close)
-            .SetOnLevelFinished(Show);
+        _signalBus.Subscribe<LevelStartedSignal>(Close);
+        _signalBus.Subscribe<LevelFinishedSignal>(SetFinished);
     }
     
-    public void Dispose() => _disposablesContainer.Dispose();
+    public void Dispose() 
+    {
+        _signalBus.Unsubscribe<LevelStartedSignal>(Close);
+        _signalBus.Unsubscribe<LevelFinishedSignal>(SetFinished);
+        _disposablesContainer.Dispose();
+    }
 
     public MapPresenter SetOnBack(Action onBack)
     {
         _onBack = onBack;
+        
+        return this;
+    }
+
+    public MapPresenter SetOnPlanetChose(Action onPlanetChosen)
+    {
+        _onPlanetChose = onPlanetChosen;
         
         return this;
     }
@@ -60,6 +74,31 @@ public class MapPresenter: Presenter<MapView>, IInitializable, IDisposable
     {
         _onBack?.Invoke();
         Close();
+    }
+    
+    private void CreatePlanetModels()
+    {
+        var maxLevel = _levelsSettings.MaxLevel;
+        var levelsDataDict = GetLevelsDataDict();
+        
+        for (int level = 1; level <= maxLevel; level++)
+        {
+            var isFirst = level == 1;
+            
+            var data = levelsDataDict.ContainsKey(level) ? 
+                levelsDataDict[level] : null;
+            
+            var prevData = levelsDataDict.ContainsKey(level - 1) ? 
+                levelsDataDict[level - 1] : null;
+            
+            var isFinished = data is {IsFinished: true};
+            var isPrevFinished = prevData is {IsFinished: true};
+            var isAvailable = isFirst || isPrevFinished;
+            
+            var planetModel = new PlanetModel(isAvailable, isFinished);
+            
+            _models.Add(planetModel);
+        }
     }
     
     private void BindModels()
@@ -93,42 +132,20 @@ public class MapPresenter: Presenter<MapView>, IInitializable, IDisposable
         }
     }
     
-    private void CreatePlanetModels()
-    {
-        var maxLevel = _levelsViewDataProvider.MaxLevel;
-        var levelsDataDict = GetLevelsDataDict();
-        
-        for (int level = 1; level <= maxLevel; level++)
-        {
-            var isFirst = level == 1;
-            
-            var data = levelsDataDict.ContainsKey(level) ? 
-                levelsDataDict[level] : null;
-            
-            var prevData = levelsDataDict.ContainsKey(level - 1) ? 
-                levelsDataDict[level - 1] : null;
-            
-            var isFinished = data is {IsFinished: true};
-            var isPrevFinished = prevData is {IsFinished: true};
-            var isAvailable = isFirst || isPrevFinished;
-            
-            var planetModel = new PlanetModel(isAvailable, isFinished);
-            
-            _models.Add(planetModel);
-        }
-    }
-    
     private Dictionary<int, LevelData> GetLevelsDataDict()
     {
         return _levelsController
-            .LevelsData
+            .SavedLevelsData
             .ToDictionary(ld => ld.Level, ld => ld);
     }
     
-    private void StartLevel(int level) => 
-        _levelsController.StartLevel(level, SetFinished);
+    private void StartLevel(int level)
+    {
+        _onPlanetChose?.Invoke();
+        _levelsController.StartLevel(level);
+    }
 
-    private void SetFinished(int level) =>
-        _models[level].IsFinished.Value = true;
+    private void SetFinished(LevelFinishedSignal signal) =>
+        _models[signal.Level].IsFinished.Value = true;
 }
 }

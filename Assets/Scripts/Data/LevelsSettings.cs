@@ -3,11 +3,15 @@
 namespace Data
 {
 [CreateAssetMenu(fileName = "New LevelsData", menuName = "Levels data")]
-public class LevelsData: ScriptableObject, ILevelsViewDataProvider
+public class LevelsSettings: ScriptableObject
 {
     [SerializeField]
     private int _maxLevel;
     public int MaxLevel => _maxLevel;
+    
+    [Header("Declares dependency from level")]
+    [SerializeField]
+    private AnimationCurve _spawnDelayCurve;
     
     [SerializeField]
     private Color _openedColor;
@@ -20,5 +24,12 @@ public class LevelsData: ScriptableObject, ILevelsViewDataProvider
     [SerializeField]
     private Color _finishedColor;
     public Color FinishedColor => _finishedColor;
+    
+    public float GetDelay(int level)
+    {
+        var ratio = level / _maxLevel;
+        
+        return _spawnDelayCurve.Evaluate(ratio);
+    }
 }
 }
