@@ -37,8 +37,8 @@ public class SpaceModel
         return this;
     }
     
-    public void Activate() => _isActive.Value = true;
+    public void Activate() => _isActive.SetValueAndForceNotify(true);
     
-    public void Deactivate() => _isActive.Value = false;
+    public void Deactivate() => _isActive.SetValueAndForceNotify(false);
 }
 }

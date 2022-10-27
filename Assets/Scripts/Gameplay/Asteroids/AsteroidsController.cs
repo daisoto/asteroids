@@ -17,6 +17,8 @@ public class AsteroidsController: IDisposable
     
     private readonly SignalBus _signalBus;
     
+    private readonly List<AsteroidController> _controllers;
+    
     private readonly DisposablesContainer _disposablesContainer;
 
     public AsteroidsController(SignalBus signalBus,
@@ -26,58 +28,32 @@ public class AsteroidsController: IDisposable
         _signalBus = signalBus;
         _behavioursFactory = behavioursFactory;
         _modelsFactory = modelsFactory
-            .SetOnCreated(CreateBehaviour);
+            .SetOnCreated(OnModelCreated);
         
         _pools = GetPools();
         
+        _controllers = new List<AsteroidController>();
         _disposablesContainer = new DisposablesContainer();
     }
     
-    public void Dispose() => _disposablesContainer.Dispose();
+    public void Dispose()
+    {
+        _disposablesContainer.Dispose();
+        _controllers.ForEach(c => c.Dispose());
+    }
     
     public AsteroidModel CreateAsteroid(AsteroidSize size) => 
         _pools[size].Get();
 
-    private void CreateBehaviour(AsteroidModel model, AsteroidSize size)
+    private void OnModelCreated(AsteroidModel model, AsteroidSize size)
     {
-        var behaviour = _behavioursFactory
-            .Get(size)
-            .SetDamage(model.Damage)
-            .SetOnDamage(model.DecreaseHealth)
-            .SetOnCollide(model.Deactivate);
+        var behaviour = _behavioursFactory.Get(size);
         
-        model.SetOnDamage(behaviour.ToggleExplosion);
+        var controller = new AsteroidController(model, behaviour, size)
+            .SetOnDeactivate(OnDeactivateModel)
+            .SetOnDestroy(OnDestroyModel);
         
-        behaviour.SetActive(false);
-        
-        _disposablesContainer.Add(model.IsActive
-            .SkipLatestValueOnSubscribe()
-            .Subscribe(isActive =>
-            {
-                if (!isActive)
-                {
-                    var position = behaviour.Position;
-                    _pools[size].Return(model);
-                    _signalBus.Fire(new AsteroidCollapseSignal(size, position));
-                    Explode(behaviour).Forget();
-                }
-                else
-                {
-                    behaviour.SetBaseModel(true);
-                    behaviour.SetActive(true);
-                    var horizontal = RandomUtils.ProcessProbability(0.5) ?
-                        Vector3.right : Vector3.left;
-                    var vertical = RandomUtils.ProcessProbability(0.5) ? 
-                        Vector3.forward : Vector3.back;
-                    model.UpdateSpeed(vertical + horizontal);
-                }
-            }));
-        
-        _disposablesContainer.Add(model.Speed
-            .Subscribe(speed => behaviour.SetSpeed(speed)));
-        
-        _disposablesContainer.Add(model.Position
-            .Subscribe(position => behaviour.Position = position)); 
+        _controllers.Add(controller);
     }
     
     private Dictionary<AsteroidSize, AsteroidsPool> GetPools()
@@ -103,12 +79,10 @@ public class AsteroidsController: IDisposable
     private AsteroidModel GetMediumModel() => _modelsFactory.Get(AsteroidSize.Medium);
     private AsteroidModel GetBigModel() => _modelsFactory.Get(AsteroidSize.Big);
     
-    private async UniTask Explode(AsteroidBehaviour behaviour)
-    {
-        behaviour.SetBaseModel(false);
-        await behaviour.ToggleExplosionAsync();
-        if (behaviour)
-            behaviour.SetActive(false);
-    }
+    private void OnDeactivateModel(AsteroidSize size, AsteroidModel model) => 
+        _pools[size].Return(model);
+    
+    private void OnDestroyModel(AsteroidSize size, Vector3 position) => 
+        _signalBus.Fire(new AsteroidCollapseSignal(size, position));
 }
 }
