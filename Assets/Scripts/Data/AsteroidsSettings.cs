@@ -32,10 +32,6 @@ public class AsteroidsSettings: ScriptableObject,
         
         return behaviour;
     }
-
-    public IFactory<AsteroidBehaviour, AsteroidSize> 
-        SetOnCreated(Action<AsteroidBehaviour, AsteroidSize> onCreated) 
-    { return this; }
 }
 
 [Serializable]

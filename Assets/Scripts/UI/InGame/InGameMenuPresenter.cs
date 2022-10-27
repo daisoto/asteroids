@@ -36,6 +36,7 @@ public class InGameMenuPresenter: Presenter<InGameMenuView>, IInitializable
         _view.CloseMenu();
         Close();
         _onExit?.Invoke();
+        _signalBus.Fire(new EndLevelSignal());
     }
     
     private void Resume() => _signalBus.Fire(new ResumeGameSignal());

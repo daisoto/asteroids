@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UniRx;
 using Zenject;
 using Data;
 
@@ -28,21 +29,25 @@ public class LevelController: IInitializable, IDisposable
         _asteroidsController = asteroidsController;
         _worldPointProvider = worldPointProvider;
         _signalBus = signalBus;
-        
+
         _sleepingAsteroidModels = new List<AsteroidModel>();
         _activeAsteroidModels = new List<AsteroidModel>();
     }
 
     public void Initialize()
     {
-        _signalBus.Subscribe<AsteroidCollapseSignal>(ProcessCollapse);
         _signalBus.Subscribe<SpaceshipDestroyedSignal>(StopPlaying);
+        _signalBus.Subscribe<EndLevelSignal>(OnLevelEnd);
+        
+        _asteroidsController
+            .SetOnExplode(ProcessCollapse)
+            .SetOnDeactivate(RemoveFromList);
     }
     
     public void Dispose()
     {
-        _signalBus.Unsubscribe<AsteroidCollapseSignal>(ProcessCollapse);
         _signalBus.Unsubscribe<SpaceshipDestroyedSignal>(StopPlaying);
+        _signalBus.Unsubscribe<EndLevelSignal>(OnLevelEnd);
     }
     
     public LevelController SetOnLevelFinished(Action<int> onLevelFinished)
@@ -62,7 +67,6 @@ public class LevelController: IInitializable, IDisposable
     public void StartLevel(LevelData levelData)
     {
         _isPlaying = true;
-        DeactivateRemaining();
         _currentLevel = levelData.Level;
         
         var sizes = EnumUtils.GetValues<AsteroidSize>();
@@ -73,8 +77,7 @@ public class LevelController: IInitializable, IDisposable
             
             for (int i = 0; i < num; i++)
             {
-                var asteroid = _asteroidsController
-                    .CreateAsteroid(size);
+                var asteroid = _asteroidsController.Get(size);
                 _sleepingAsteroidModels.Add(asteroid);
             }
         }
@@ -83,15 +86,22 @@ public class LevelController: IInitializable, IDisposable
         LevelSequence().Forget();
     }
     
+    private void OnLevelEnd()
+    {
+        StopPlaying();
+        DeactivateRemaining();
+    }
+    
     private void StopPlaying() => _isPlaying = false;
     
-    private void DeactivateRemaining()
+    private void DeactivateRemaining() 
     {
-        _activeAsteroidModels.ForEach(m => m.Deactivate()); 
-        _sleepingAsteroidModels.ForEach(m => m.Deactivate()); 
+        while (_activeAsteroidModels.Count > 0)
+            _activeAsteroidModels[0].Deactivate();
         
-        _activeAsteroidModels.Clear();
-        _sleepingAsteroidModels.Clear();
+        while (_sleepingAsteroidModels.Count > 0)
+            _sleepingAsteroidModels[0].Deactivate();
+        
         _asteroidsNum = 0;
     }
         
@@ -100,11 +110,10 @@ public class LevelController: IInitializable, IDisposable
     {
         while (_isPlaying && _sleepingAsteroidModels.Count > 0)
         {
-            await UniTask.Delay(TimeSpan.FromSeconds(_delay)); 
-        
             var asteroid = _sleepingAsteroidModels.PickRandom();
-            _sleepingAsteroidModels.Remove(asteroid);
+            await UniTask.Delay(TimeSpan.FromSeconds(_delay));
             
+            _sleepingAsteroidModels.Remove(asteroid);
             SetAsteroid(asteroid, GetRandomPosition());
         }
     }
@@ -114,35 +123,35 @@ public class LevelController: IInitializable, IDisposable
         asteroid.SetPosition(position);
         asteroid.Reset();
         _activeAsteroidModels.Add(asteroid);
+        
+        var sub = asteroid.IsActive
+            .Subscribe(isActive =>
+            {
+                if (!isActive)
+                    _activeAsteroidModels.Remove(asteroid);
+            });
+        
     }
 
-    private void ProcessCollapse(AsteroidCollapseSignal signal)
+    private void ProcessCollapse(AsteroidSize size, Vector3 pos)
     {
-        var size = signal.Size;
-        var pos = signal.Position;
-        
         if (!_isPlaying)
             return;
         
-        // Todo to different classes?
-        switch (size)
+        switch (size) // Todo to different classes?
         {
             case AsteroidSize.Small:
                 _asteroidsNum -= 1;
                 CheckLevelFinished();
                 break;
             case AsteroidSize.Medium:
-                SetAsteroid(_asteroidsController
-                    .CreateAsteroid(AsteroidSize.Small), pos);
-                SetAsteroid(_asteroidsController
-                    .CreateAsteroid(AsteroidSize.Small), pos);
+                SetAsteroid(_asteroidsController.Get(AsteroidSize.Small), pos);
+                SetAsteroid(_asteroidsController.Get(AsteroidSize.Small), pos);
                 _asteroidsNum++;
                 break;
             case AsteroidSize.Big:
-                SetAsteroid(_asteroidsController
-                    .CreateAsteroid(AsteroidSize.Medium), pos);
-                SetAsteroid(_asteroidsController
-                    .CreateAsteroid(AsteroidSize.Medium), pos);
+                SetAsteroid(_asteroidsController.Get(AsteroidSize.Medium), pos);
+                SetAsteroid(_asteroidsController.Get(AsteroidSize.Medium), pos);
                 _asteroidsNum++;
                 break;
         }
@@ -164,6 +173,15 @@ public class LevelController: IInitializable, IDisposable
             _signalBus.Fire(new LevelPassedSignal());
             _onLevelFinished?.Invoke(_currentLevel);
         }
+    }
+    
+    private void RemoveFromList(AsteroidModel model) 
+    {
+        if (_activeAsteroidModels.Contains(model))
+            _activeAsteroidModels.Remove(model);
+        
+        if (_sleepingAsteroidModels.Contains(model))
+            _sleepingAsteroidModels.Remove(model);
     }
 }
 }

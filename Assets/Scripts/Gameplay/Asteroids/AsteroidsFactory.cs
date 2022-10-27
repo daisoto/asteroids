@@ -2,7 +2,7 @@
 
 namespace Gameplay
 {
-public class AsteroidsFactory: Factory<AsteroidModel, AsteroidSize>
+public class AsteroidsFactory: IFactory<AsteroidModel, AsteroidSize>
 {
     private readonly AsteroidsSettings _settings;
     public AsteroidsFactory(AsteroidsSettings settings)
@@ -10,7 +10,7 @@ public class AsteroidsFactory: Factory<AsteroidModel, AsteroidSize>
         _settings = settings;
     }
 
-    protected override AsteroidModel Create(AsteroidSize size)
+    public AsteroidModel Get(AsteroidSize size)
     {
         AsteroidModel model = default;
         
@@ -25,7 +25,8 @@ public class AsteroidsFactory: Factory<AsteroidModel, AsteroidSize>
     {
         var healthModel = new HealthModel(data.MaxHealth);
         var speedModel = new RandomSpeedModel(data.MaxSpeed, data.MinSpeed);
-        var model = new AsteroidModel(healthModel, speedModel, data.Damage);
+        var model = new AsteroidModel(
+            healthModel, speedModel, data.Damage, data.Size);
         
         return model;
     }

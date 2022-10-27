@@ -47,10 +47,6 @@ public class ProjectInstaller : MonoInstaller
         Container.BindInterfacesAndSelfTo<SpaceshipsSettings>()
             .FromInstance(_spaceshipsSettings);
         
-        Container.BindInterfacesAndSelfTo<IFactory<ProjectileBehaviour>>()
-            .FromInstance(new Factory<ProjectileBehaviour>(
-                _spaceshipsSettings.GetProjectileBehaviour));
-        
         Container.BindInterfacesAndSelfTo<SpaceshipDataManager>()
             .AsSingle()
             .NonLazy();

@@ -7,7 +7,8 @@ using Gameplay;
 namespace Data
 {
 [CreateAssetMenu(fileName = "New SpaceshipsData", menuName = "Spaceships data")]
-public class SpaceshipsSettings : ScriptableObject, ITextureProvider
+public class SpaceshipsSettings : ScriptableObject, ITextureProvider, 
+    IFactory<ProjectileBehaviour>
 {
     [SerializeField]
     private SpaceshipData[] _spaceShipsData;
@@ -21,7 +22,7 @@ public class SpaceshipsSettings : ScriptableObject, ITextureProvider
     
     public int MaxValue => 3;
 
-    public ProjectileBehaviour GetProjectileBehaviour() => 
+    public ProjectileBehaviour Get() => 
         Instantiate(_projectileBehaviourPrefab);
 
     public Texture2D GetTexture(string id)

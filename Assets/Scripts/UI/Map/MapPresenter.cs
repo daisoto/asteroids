@@ -65,9 +65,9 @@ public class MapPresenter: Presenter<MapView>, IInitializable, IDisposable
         return this;
     }
 
-    public MapPresenter SetOnPlanetChose(Action onPlanetChosen)
+    public MapPresenter SetOnPlanetChose(Action onPlanetChose)
     {
-        _onPlanetChose = onPlanetChosen;
+        _onPlanetChose = onPlanetChose;
         
         return this;
     }

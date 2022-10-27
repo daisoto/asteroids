@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Data;
 using UniRx;
 using UnityEngine;
@@ -13,6 +14,7 @@ public class BlasterController: IInitializable, IDisposable
     private readonly SpaceshipController _spaceshipController;
     private readonly SignalBus _signalBus; 
     
+    private readonly List<ProjectileModel> _activeModels;
     private readonly DisposablesContainer _disposablesContainer;
     
     private BlasterModel _model;
@@ -26,19 +28,23 @@ public class BlasterController: IInitializable, IDisposable
         _signalBus = signalBus;
 
         _projectilesPool = GetProjectilesPool();
+        _activeModels = new List<ProjectileModel>();
         _disposablesContainer = new DisposablesContainer();
     }
 
     public void Initialize()
     {
         _signalBus.Subscribe<SetSpaceshipDataSignal>(SetData);
+        _signalBus.Subscribe<EndLevelSignal>(OnLevelEnd);
     }
     
     public void Dispose()
     {
         _model?.Dispose();
         _signalBus.Unsubscribe<SetSpaceshipDataSignal>(SetData);
+        _signalBus.Unsubscribe<EndLevelSignal>(OnLevelEnd);
         _disposablesContainer.Dispose();
+        _projectilesPool.Clear();
     }
     
     private void SetData(SetSpaceshipDataSignal signal)
@@ -59,6 +65,12 @@ public class BlasterController: IInitializable, IDisposable
         }
     }
     
+    private void OnLevelEnd()
+    {
+        while (_activeModels.Count > 0)
+            _activeModels[0].Deactivate();
+    }
+    
     private Quaternion GetRotation(ProjectileModel model)
     {
         return _spaceshipController.GetRotation() * model.InitialRotation;
@@ -77,9 +89,13 @@ public class BlasterController: IInitializable, IDisposable
     
     private IPool<ProjectileModel> GetProjectilesPool()
     {
-        return new ProjectilesPool(
-            new Factory<ProjectileModel>(GetProjectileModel)
-                .SetOnCreated(CreateProjectileBehaviour));
+        var projectilesFactory = 
+            new Factory<ProjectileModel>(GetProjectileModel);
+        var dProjectilesFactory = 
+            new DecoratedFactory<ProjectileModel>(projectilesFactory)
+                .SetOnCreated(CreateProjectileBehaviour);
+        
+        return new ProjectilesPool(dProjectilesFactory);
     }
     
     private void CreateProjectileBehaviour(ProjectileModel model)
@@ -96,10 +112,16 @@ public class BlasterController: IInitializable, IDisposable
             {
                 behaviour.SetActive(isActive);
             
-                if (!isActive)
-                    _projectilesPool.Return(model);
-                else
+                if (isActive)
+                {
+                    _activeModels.Add(model);
                     model.UpdateSpeed(-behaviour.Forward);
+                }
+                else
+                {
+                    _activeModels.Remove(model);
+                    _projectilesPool.Return(model);
+                }
             }));
         
         _disposablesContainer.Add(model.Position

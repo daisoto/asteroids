@@ -16,14 +16,16 @@ public class AsteroidModel: SpaceModel, IResettable
     
     public IReadOnlyReactiveProperty<Vector3> Speed => _speedProvider.Speed;
     
+    public AsteroidSize Size { get;}
     public int Damage { get; }
-    
+
     public AsteroidModel(HealthModel healthModel,  
-        SpeedProvider speedProvider, int damage)
+        SpeedProvider speedProvider, int damage, AsteroidSize size)
     {
         _healthModel = healthModel;
         _speedProvider = speedProvider;
         Damage = damage;
+        Size = size;
         
         _destroy = new ReactiveCommand();
         _explode = new ReactiveCommand();

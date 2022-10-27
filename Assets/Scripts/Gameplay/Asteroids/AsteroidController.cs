@@ -9,19 +9,17 @@ public class AsteroidController: IDisposable
 {
     private readonly AsteroidModel _model;
     private readonly AsteroidBehaviour _behaviour;
-    private readonly AsteroidSize _size;
     
     private readonly DisposablesContainer _disposablesContainer;
     
-    private Action<AsteroidSize, Vector3> _onDestroy;
-    private Action<AsteroidSize, AsteroidModel> _onDeactivate;
+    private Action<AsteroidSize, Vector3> _onExplode;
+    private Action<AsteroidModel> _onDeactivate;
 
     public AsteroidController(AsteroidModel model, 
-        AsteroidBehaviour behaviour, AsteroidSize size)
+        AsteroidBehaviour behaviour)
     {
         _model = model;
         _behaviour = behaviour;
-        _size = size;
 
         _disposablesContainer = new DisposablesContainer();
         
@@ -30,16 +28,16 @@ public class AsteroidController: IDisposable
     
     public void Dispose() => _disposablesContainer.Dispose();
     
-    public AsteroidController SetOnDestroy(
-        Action<AsteroidSize, Vector3> onDestroy)
+    public AsteroidController SetOnExplode(
+        Action<AsteroidSize, Vector3> onExplode)
     {
-        _onDestroy = onDestroy;
+        _onExplode = onExplode;
         
         return this;
     }
     
     public AsteroidController SetOnDeactivate(
-        Action<AsteroidSize, AsteroidModel> onDeactivate)
+        Action<AsteroidModel> onDeactivate)
     {
         _onDeactivate = onDeactivate;
         
@@ -72,7 +70,7 @@ public class AsteroidController: IDisposable
                 }
                 else
                 {
-                    _onDeactivate?.Invoke(_size, _model);
+                    _onDeactivate?.Invoke(_model);
                     _behaviour.SetActive(false);
                 }
             }));
@@ -93,12 +91,10 @@ public class AsteroidController: IDisposable
     private async UniTask Destroy()
     {
         _behaviour.SetBaseModel(false);
-        var position = _behaviour.Position;
-        _onDestroy?.Invoke(_size, position);
+        _onExplode?.Invoke(_model.Size, _behaviour.Position);
         await _behaviour.ToggleExplosionAsync();
-        if (_behaviour)
-            _behaviour.SetActive(false);
-        _model.Deactivate();
+        if (_model.IsActive.Value)
+            _model.Deactivate();
     }
 }
 }
