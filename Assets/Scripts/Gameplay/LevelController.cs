@@ -42,7 +42,7 @@ public class LevelController: IInitializable, IDisposable
     public void Dispose()
     {
         _signalBus.Unsubscribe<AsteroidCollapseSignal>(ProcessCollapse);
-        _signalBus.Subscribe<SpaceshipDestroyedSignal>(StopPlaying);
+        _signalBus.Unsubscribe<SpaceshipDestroyedSignal>(StopPlaying);
     }
     
     public LevelController SetOnLevelFinished(Action<int> onLevelFinished)
@@ -63,8 +63,8 @@ public class LevelController: IInitializable, IDisposable
     {
         _isPlaying = true;
         DeactivateRemaining();
-        _asteroidsNum = 0;
         _currentLevel = levelData.Level;
+        
         var sizes = EnumUtils.GetValues<AsteroidSize>();
         foreach (var size in sizes)
         {
@@ -85,8 +85,16 @@ public class LevelController: IInitializable, IDisposable
     
     private void StopPlaying() => _isPlaying = false;
     
-    private void DeactivateRemaining() => 
-        _activeAsteroidModels.ForEach(a => a.Deactivate());
+    private void DeactivateRemaining()
+    {
+        _activeAsteroidModels.ForEach(m => m.Deactivate()); 
+        _sleepingAsteroidModels.ForEach(m => m.Deactivate()); 
+        
+        _activeAsteroidModels.Clear();
+        _sleepingAsteroidModels.Clear();
+        _asteroidsNum = 0;
+    }
+        
     
     private async UniTask LevelSequence()
     {
@@ -103,9 +111,8 @@ public class LevelController: IInitializable, IDisposable
     
     private void SetAsteroid(AsteroidModel asteroid, Vector3 position)
     {
-        asteroid
-            .SetPosition(position)
-            .Activate();
+        asteroid.SetPosition(position);
+        asteroid.Reset();
         _activeAsteroidModels.Add(asteroid);
     }
 

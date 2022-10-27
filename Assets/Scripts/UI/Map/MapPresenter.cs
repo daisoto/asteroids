@@ -39,19 +39,21 @@ public class MapPresenter: Presenter<MapView>, IInitializable, IDisposable
 
     public void Initialize()
     {
-        CreatePlanetModels();
+        UpdatePlanetModels();
         BindModels();
         
         _view
             .SetOnBack(Back);
         
         _signalBus.Subscribe<LevelStartedSignal>(Close);
+        _signalBus.Subscribe<SetSpaceshipDataSignal>(UpdatePlanetModels);
         _signalBus.Subscribe<LevelFinishedSignal>(SetFinished);
     }
     
     public void Dispose() 
     {
         _signalBus.Unsubscribe<LevelStartedSignal>(Close);
+        _signalBus.Unsubscribe<SetSpaceshipDataSignal>(UpdatePlanetModels);
         _signalBus.Unsubscribe<LevelFinishedSignal>(SetFinished);
         _disposablesContainer.Dispose();
     }
@@ -76,7 +78,7 @@ public class MapPresenter: Presenter<MapView>, IInitializable, IDisposable
         Close();
     }
     
-    private void CreatePlanetModels()
+    private void UpdatePlanetModels()
     {
         var maxLevel = _levelsSettings.MaxLevel;
         var levelsDataDict = GetLevelsDataDict();
@@ -95,9 +97,15 @@ public class MapPresenter: Presenter<MapView>, IInitializable, IDisposable
             var isPrevFinished = prevData is {IsFinished: true};
             var isAvailable = isFirst || isPrevFinished;
             
-            var planetModel = new PlanetModel(isAvailable, isFinished);
+            if (_models.Count >= level)
+            {
+                _models[level - 1].IsAvailable.Value = isAvailable;
+                _models[level - 1].IsFinished.Value = isFinished;
+            }
+            else
+                _models.Add(
+                    new PlanetModel(isAvailable, isFinished));
             
-            _models.Add(planetModel);
         }
     }
     
@@ -145,7 +153,15 @@ public class MapPresenter: Presenter<MapView>, IInitializable, IDisposable
         _levelsController.StartLevel(level);
     }
 
-    private void SetFinished(LevelFinishedSignal signal) =>
-        _models[signal.Level].IsFinished.Value = true;
+    private void SetFinished(LevelFinishedSignal signal)
+    {
+        var level = signal.Level;
+        
+        _models[level - 1].IsFinished.Value = true;
+        
+        if (_models.Count > level)
+            _models[level].IsAvailable.Value = true;
+    }
+        
 }
 }

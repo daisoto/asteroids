@@ -3,10 +3,10 @@ using UnityEngine;
 
 namespace Gameplay
 {
-public class UniformSpeedProvider: ISpeedProvider
+public class UniformSpeedProvider: SpeedProvider
 {
-    public IReadOnlyReactiveProperty<Vector3> Speed => _speed;
-    private readonly ReactiveProperty<Vector3> _speed;
+    public override IReadOnlyReactiveProperty<Vector3> Speed => _speed;
+    private  readonly ReactiveProperty<Vector3> _speed;
     
     private readonly float _speedInternal;
     
@@ -16,7 +16,7 @@ public class UniformSpeedProvider: ISpeedProvider
         _speedInternal = speed;
     }
     
-    public void UpdateSpeed(Vector3 direction) => 
+    public override void UpdateSpeed(Vector3 direction) => 
         _speed.SetValueAndForceNotify(direction * _speedInternal);
 }
 }

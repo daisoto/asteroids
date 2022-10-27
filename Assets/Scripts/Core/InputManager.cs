@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 
 namespace Core 
 {
-public class InputManager
+public class InputManager: IResettable
 {
     public bool IsFiring { get; private set; }
     
@@ -29,6 +29,13 @@ public class InputManager
             Unsubscribe();
             _playerControls.Disable();
         }
+    }
+    
+    public void Reset()
+    {
+        Move = Vector2.zero;
+        Look = Vector2.zero;
+        IsFiring = false;
     }
 
     private void Subscribe()

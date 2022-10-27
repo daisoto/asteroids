@@ -51,19 +51,14 @@ public class AsteroidController: IDisposable
         _behaviour
             .SetDamage(_model.Damage)
             .SetOnDamage(_model.DecreaseHealth)
-            .SetOnCollide(_model.Deactivate)
+            .SetOnCollide(_model.Collide)
             .SetActive(false);
         
         _disposablesContainer.Add(_model.IsActive
             .SkipLatestValueOnSubscribe()
             .Subscribe(isActive =>
             {
-                if (!isActive)
-                {
-                    _onDeactivate?.Invoke(_size, _model);
-                    _behaviour.SetActive(false);
-                }
-                else
+                if (isActive)
                 {
                     _behaviour.SetBaseModel(true);
                     _behaviour.SetActive(true);
@@ -74,6 +69,11 @@ public class AsteroidController: IDisposable
                         RandomUtils.ProcessProbability(0.5) ? 
                             Vector3.forward : Vector3.back;
                     _model.UpdateSpeed(vertical + horizontal);
+                }
+                else
+                {
+                    _onDeactivate?.Invoke(_size, _model);
+                    _behaviour.SetActive(false);
                 }
             }));
         
@@ -92,12 +92,13 @@ public class AsteroidController: IDisposable
     
     private async UniTask Destroy()
     {
-        var position = _behaviour.Position;
         _behaviour.SetBaseModel(false);
+        var position = _behaviour.Position;
+        _onDestroy?.Invoke(_size, position);
         await _behaviour.ToggleExplosionAsync();
         if (_behaviour)
             _behaviour.SetActive(false);
-        _onDestroy?.Invoke(_size, position);
+        _model.Deactivate();
     }
 }
 }

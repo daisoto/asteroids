@@ -3,10 +3,10 @@ using UnityEngine;
 
 namespace Gameplay
 {
-public class RandomSpeedModel: ISpeedProvider
+public class RandomSpeedModel: SpeedProvider
 {
     private readonly ReactiveProperty<Vector3> _speed;
-    public IReadOnlyReactiveProperty<Vector3> Speed => _speed;
+    public override IReadOnlyReactiveProperty<Vector3> Speed => _speed;
 
     private readonly float _maxSpeed;
     private readonly float _minSpeed;
@@ -19,7 +19,7 @@ public class RandomSpeedModel: ISpeedProvider
         _speed = new ReactiveProperty<Vector3>();
     }
 
-    public void UpdateSpeed(Vector3 direction) => 
+    public override void UpdateSpeed(Vector3 direction) => 
         _speed.Value = direction * RandomUtils.GetFloat(_minSpeed, _maxSpeed);
 }
 }

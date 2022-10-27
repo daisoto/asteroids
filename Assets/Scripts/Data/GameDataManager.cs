@@ -30,6 +30,15 @@ public abstract class GameDataManager<T>
         
         return exists;
     }
+    
+    public void Clear()
+    {
+        string filepath = GetSavePath(_fileName);
+        var exists = File.Exists(filepath);
+        
+        if (exists)
+            File.Delete(filepath);
+    }
 
     private string GetSavePath(string dir)
     {

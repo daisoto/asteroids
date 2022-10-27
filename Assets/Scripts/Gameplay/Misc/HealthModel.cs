@@ -3,7 +3,7 @@ using System;
 
 namespace Gameplay
 {
-public class HealthModel
+public class HealthModel: IResettable
 {
     private readonly ReactiveProperty<int> _health;
     public IReadOnlyReactiveProperty<int> Health => _health;
@@ -25,7 +25,7 @@ public class HealthModel
         return this;
     }
     
-    public void Restore() => _health.Value = _maxHealth;
+    public void Reset() => _health.Value = _maxHealth;
     
     public void DecreaseHealth(int damage)
     {

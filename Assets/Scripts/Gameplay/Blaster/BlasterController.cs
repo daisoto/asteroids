@@ -52,11 +52,10 @@ public class BlasterController: IInitializable, IDisposable
         if (_model.CanFire())
         {
             var projectile = _projectilesPool.Get();
-            
             projectile
                 .SetPosition(_spaceshipController.GetBarrelPosition())
                 .SetRotation(GetRotation(projectile));
-            projectile.Activate();
+            projectile.Reset();
         }
     }
     
@@ -93,7 +92,6 @@ public class BlasterController: IInitializable, IDisposable
             .SetDamage(_model.Damage);
         
         _disposablesContainer.Add(model.IsActive
-            .SkipLatestValueOnSubscribe()
             .Subscribe(isActive =>
             {
                 behaviour.SetActive(isActive);
@@ -109,8 +107,8 @@ public class BlasterController: IInitializable, IDisposable
                 behaviour.Position = position));
         
         _disposablesContainer.Add(model.Rotation
-            .Subscribe(position => 
-                behaviour.Rotation = position));
+            .Subscribe(rotation => 
+                behaviour.Rotation = rotation));
         
         _disposablesContainer.Add(model.Speed
             .Subscribe(speed => 

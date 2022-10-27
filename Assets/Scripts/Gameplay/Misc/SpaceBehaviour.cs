@@ -22,12 +22,16 @@ public class SpaceBehaviour: MonoBehaviour
     public Quaternion Rotation
     {
         get => transform.rotation;
-        set => transform.rotation = value;
+        set => transform.rotation = value.normalized;
     }
     
     public Vector3 Forward => transform.forward;
     
-    public void SetActive(bool flag) => gameObject.SetActive(flag);
+    public void SetActive(bool flag) 
+    {
+        if (gameObject)
+            gameObject.SetActive(flag);
+    }
     
     public void SetBaseModel(bool flag) 
     {

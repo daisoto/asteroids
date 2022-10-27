@@ -49,7 +49,7 @@ public class SpaceshipController: IInitializable, IDisposable
 
     public void Initialize()
     {        
-        _signalBus.Subscribe<LevelStartedSignal>(Activate);
+        _signalBus.Subscribe<LevelStartedSignal>(Reset);
         _signalBus.Subscribe<SetSpaceshipDataSignal>(SetData);
         
         _behaviour
@@ -58,7 +58,7 @@ public class SpaceshipController: IInitializable, IDisposable
     
     public void Dispose()
     {
-        _signalBus.Unsubscribe<LevelStartedSignal>(Activate);
+        _signalBus.Unsubscribe<LevelStartedSignal>(Reset);
         _signalBus.Unsubscribe<SetSpaceshipDataSignal>(SetData);
         _disposablesContainer.Dispose();
     }
@@ -79,7 +79,7 @@ public class SpaceshipController: IInitializable, IDisposable
     public void Rotate(Vector2 position)
     {
         var targetPosition = _worldPointProvider.GetFromScreen(position);
-        var relativePos = _model.Position.Value - targetPosition;
+        var relativePos = _behaviour.Position - targetPosition;
         var rotation = Quaternion.LookRotation(relativePos);
         
         _model.SetRotation(rotation);
@@ -99,19 +99,32 @@ public class SpaceshipController: IInitializable, IDisposable
             _spaceshipDataManager.Save(data);
         
         _maxHealth.Value = data.MaxHealth;
-        
         _model = GetSpaceshipModel(data);
-
         _behaviour.SetTexture(_textureProvider.GetTexture(data.Title));
         
+        Bind();
+    }
+    
+    private void Bind()
+    {
         _disposablesContainer.Dispose();
+        
+        _disposablesContainer.Add(_model.IsActive
+            .Subscribe(isActive =>
+            {
+                _behaviour.SetBaseModel(isActive);
+                _behaviour.SetActive(isActive);
+            }));
         
         _disposablesContainer.Add(_model.Health
             .Subscribe(health => _health.Value = health));
+        
         _disposablesContainer.Add(_model.Position
             .Subscribe(pos => _behaviour.Position = pos));
+        
         _disposablesContainer.Add(_model.Rotation
             .Subscribe(rot => _behaviour.Rotation = rot));
+        
         _disposablesContainer.Add(_model.Speed
             .Subscribe(speed =>
             {
@@ -129,14 +142,12 @@ public class SpaceshipController: IInitializable, IDisposable
         return new SpaceshipModel(healthModel, speedProvider);
     }
     
-    private void Activate()
+    private void Reset()
     {
-        _model.Restore()
+        _model
             .SetPosition(_initialPosition)
             .SetRotation(_initialRotation);
-        
-        _behaviour.SetBaseModel(true);
-        _behaviour.SetActive(true);
+        _model.Reset();
     }
     
     private void Explode() =>

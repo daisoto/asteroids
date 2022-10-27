@@ -6,7 +6,7 @@ using Zenject;
 
 namespace Gameplay
 {
-public class LevelsController
+public class LevelsController: IInitializable, IDisposable
 {
     private readonly Dictionary<AsteroidSize, AsteroidsNumProvider> 
         _asteroidsNumProviders;
@@ -47,6 +47,21 @@ public class LevelsController
             {AsteroidSize.Small, smallAsteroidNumProvider},
             {AsteroidSize.Medium, mediumAsteroidNumProvider}
         };
+    }
+
+    public void Initialize() =>
+        _signalBus.Subscribe<SetSpaceshipDataSignal>(TryClearSave);
+
+    public void Dispose() => 
+        _signalBus.Unsubscribe<SetSpaceshipDataSignal>(TryClearSave);
+    
+    private void TryClearSave(SetSpaceshipDataSignal signal)
+    {
+        if (signal.IsNew)
+        {
+            _levelsDataManager.Clear();
+            _savedLevelsData.Clear();
+        }
     }
     
     public void StartLevel(int level)

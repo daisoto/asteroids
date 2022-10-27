@@ -42,7 +42,10 @@ public class PlayerController: IInitializable, IDisposable
         if (flag)
             SetObservation();
         else
+        {
             _updateObservation?.Dispose();
+            _inputManager.Reset();
+        }
     }
     
     private void SetObservation()

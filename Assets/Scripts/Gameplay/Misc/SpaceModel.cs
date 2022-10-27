@@ -14,8 +14,6 @@ public class SpaceModel
     private readonly ReactiveProperty<Quaternion> _rotation;
     public IReadOnlyReactiveProperty<Quaternion> Rotation => _rotation;
     
-    public Quaternion InitialRotation { get; set; }
-    
     public SpaceModel()
     {
         _isActive = new ReactiveProperty<bool>();
@@ -25,14 +23,14 @@ public class SpaceModel
     
     public SpaceModel SetPosition(Vector3 position)
     {
-        _position.Value = position;
+        _position.SetValueAndForceNotify(position);
         
         return this;
     }
     
     public SpaceModel SetRotation(Quaternion rotation)
     {
-        _rotation.Value = rotation;
+        _rotation.SetValueAndForceNotify(rotation);
         
         return this;
     }
