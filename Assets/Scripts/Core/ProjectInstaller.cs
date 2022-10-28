@@ -117,12 +117,12 @@ public class ProjectInstaller : MonoInstaller
         Container.BindInterfacesTo<AsteroidsFactory>()
             .AsSingle();
         
-        Container.Bind<AsteroidsNumProvider>()
+        Container.Bind<IAsteroidsNumProvider>()
             .WithId(AsteroidSize.Small)
             .FromInstance(new SmallAsteroidsNumProvider(_levelsSettings.MaxLevel))
             .NonLazy();
 
-        Container.Bind<AsteroidsNumProvider>()
+        Container.Bind<IAsteroidsNumProvider>()
             .WithId(AsteroidSize.Medium)
             .FromInstance(new MediumAsteroidsNumProvider(_levelsSettings.MaxLevel))
             .NonLazy();

@@ -8,7 +8,7 @@ namespace Gameplay
 {
 public class LevelsController: IInitializable, IDisposable
 {
-    private readonly Dictionary<AsteroidSize, AsteroidsNumProvider> 
+    private readonly Dictionary<AsteroidSize, IAsteroidsNumProvider> 
         _asteroidsNumProviders;
     private readonly LevelController _levelController;
     private readonly LevelsDataManager _levelsDataManager;
@@ -24,9 +24,9 @@ public class LevelsController: IInitializable, IDisposable
 
     public LevelsController(LevelController levelController,
         [Inject(Id = AsteroidSize.Small)]
-        AsteroidsNumProvider smallAsteroidNumProvider, 
+        IAsteroidsNumProvider smallAsteroidNumProvider, 
         [Inject(Id = AsteroidSize.Medium)]
-        AsteroidsNumProvider mediumAsteroidNumProvider, 
+        IAsteroidsNumProvider mediumAsteroidNumProvider, 
         LevelsDataManager levelsDataManager,
         LevelsSettings levelsSettings, 
         AsteroidsSettings asteroidsSettings, SignalBus signalBus)
@@ -42,7 +42,7 @@ public class LevelsController: IInitializable, IDisposable
             levelsData : new List<LevelData>();
         
         _asteroidsNumProviders = 
-            new Dictionary<AsteroidSize, AsteroidsNumProvider>
+            new Dictionary<AsteroidSize, IAsteroidsNumProvider>
         {
             {AsteroidSize.Small, smallAsteroidNumProvider},
             {AsteroidSize.Medium, mediumAsteroidNumProvider}

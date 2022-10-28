@@ -2,16 +2,27 @@
 
 namespace Gameplay
 {
-public class SmallAsteroidsNumProvider: AsteroidsNumProvider
+public class SmallAsteroidsNumProvider: IAsteroidsNumProvider
 {
-    public SmallAsteroidsNumProvider(int maxLevel) : base(maxLevel) { }
+    private readonly int _maxLevel;
     
-    public override int GetNum(int level, int maxNum)
+    public SmallAsteroidsNumProvider(int maxLevel)
     {
-        var minNum = Mathf.RoundToInt(
-            (_maxLevel - level + 1f) / (_maxLevel + 1f) * maxNum);
+        _maxLevel = maxLevel;
+    }
+    
+    public int GetNum(int level, int maxNum)
+    {
+        var max = Mathf.RoundToInt(
+            maxNum * ((_maxLevel - level) / (float)_maxLevel));
         
-        return RandomUtils.GetInt(minNum, maxNum);
+        var min = Mathf.RoundToInt(
+            maxNum * ((_maxLevel - level * 2) / (float)_maxLevel));
+        
+        if (min < 0) 
+            min = 0;
+        
+        return RandomUtils.GetInt(min, max);
     }
 }
 }
