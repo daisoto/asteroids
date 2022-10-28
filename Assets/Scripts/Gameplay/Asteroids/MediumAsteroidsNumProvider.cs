@@ -15,7 +15,7 @@ public class MediumAsteroidsNumProvider: IAsteroidsNumProvider
     
     public int GetNum(int level, int maxNum)
     {
-        var b = maxNum / _middle + _middle;
+        var b = 2 * _middle;
         var max = Mathf.RoundToInt(-(level * level) + b * level);
         var min = Mathf.RoundToInt(max - _step);
         

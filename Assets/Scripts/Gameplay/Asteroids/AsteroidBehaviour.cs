@@ -17,7 +17,10 @@ public class AsteroidBehaviour: SpaceBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.TryGetComponent(out ProjectileBehaviour projectile))
+        {
             _onDamage?.Invoke(projectile.Damage);
+            AddImpulse(projectile.Impulse - Impulse);
+        }
     }
 
     private void OnCollisionEnter(Collision other)

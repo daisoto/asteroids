@@ -158,7 +158,8 @@ public class SpaceshipController: IInitializable, IDisposable
         _onExplosion?.Invoke();
         _behaviour.SetBaseModel(false);
         await _behaviour.ToggleExplosion();
-        _behaviour.SetActive(false);
+        if (_behaviour)
+            _behaviour.SetActive(false);
         _signalBus.Fire(new SpaceshipDestroyedSignal());
     }
 }

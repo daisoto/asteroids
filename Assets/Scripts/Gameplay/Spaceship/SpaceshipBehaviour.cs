@@ -23,8 +23,14 @@ public class SpaceshipBehaviour: SpaceBehaviour
     private void OnCollisionEnter(Collision other)
     {
         if (other.gameObject.TryGetComponent(out AsteroidBehaviour asteroid))
+        {
             _onDamage?.Invoke(asteroid.Damage);
+            AddImpulse(asteroid.Impulse - Impulse);
+        }
     }
+    
+    [ContextMenu("test")]
+    private void test() => AddImpulse(Vector3.back);
     
     public SpaceshipBehaviour SetTexture(Texture2D texture)
     {

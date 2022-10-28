@@ -13,6 +13,9 @@ public class SpaceBehaviour: MonoBehaviour
     [SerializeField]
     protected Rigidbody _rigidbody;
     
+    public Vector3 Impulse => 
+        _rigidbody.mass * _rigidbody.velocity;
+    
     public Vector3 Position
     {
         get => transform.position;
@@ -40,5 +43,8 @@ public class SpaceBehaviour: MonoBehaviour
     }
 
     public void SetSpeed(Vector3 speed) => _rigidbody.velocity = speed;
+    
+    public void AddImpulse(Vector3 force) => 
+        _rigidbody.AddForce(force,ForceMode.Impulse);
 }
 }
