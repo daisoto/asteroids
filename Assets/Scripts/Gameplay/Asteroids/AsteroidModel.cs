@@ -18,14 +18,18 @@ public class AsteroidModel: SpaceModel, IResettable
     
     public AsteroidSize Size { get;}
     public int Damage { get; }
+    public float RotationTumble { get; }
+    public Vector3 ExplosionStrength { get; }
 
-    public AsteroidModel(HealthModel healthModel,  
-        SpeedProvider speedProvider, int damage, AsteroidSize size)
+    public AsteroidModel(HealthModel healthModel, SpeedProvider speedProvider, 
+        AsteroidSize size, int damage, float tumble, Vector3 explosionStr)
     {
         _healthModel = healthModel;
         _speedProvider = speedProvider;
-        Damage = damage;
         Size = size;
+        Damage = damage;
+        RotationTumble = tumble;
+        ExplosionStrength = explosionStr;
         
         _destroy = new ReactiveCommand();
         _explode = new ReactiveCommand();

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,6 +10,8 @@ public class InputManager: IResettable
     
     public Vector2 Move { get; private set; }
     public Vector2 Look { get; private set; }
+    
+    public event Action OnPause = () => {}; 
 
     private readonly PlayerControls _playerControls;
 
@@ -48,6 +51,8 @@ public class InputManager: IResettable
         
         _playerControls.Player.Fire.performed += ProcessFireInput;
         _playerControls.Player.Fire.canceled += ProcessFireInput;
+        
+        _playerControls.Player.Pause.performed += ProcessPause;
     }
 
     private void Unsubscribe()
@@ -60,6 +65,8 @@ public class InputManager: IResettable
         
         _playerControls.Player.Fire.performed -= ProcessFireInput;
         _playerControls.Player.Fire.canceled -= ProcessFireInput;
+        
+        _playerControls.Player.Pause.performed -= ProcessPause;
     }
 
     private void ProcessMoveInput(InputAction.CallbackContext ctx) => 
@@ -70,5 +77,8 @@ public class InputManager: IResettable
     
     private void ProcessFireInput(InputAction.CallbackContext ctx) =>
         IsFiring = ctx.ReadValue<float>().Equals(1);
+    
+    private void ProcessPause(InputAction.CallbackContext ctx) =>
+        OnPause?.Invoke();
 }
 }

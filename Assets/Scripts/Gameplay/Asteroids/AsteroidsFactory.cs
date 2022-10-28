@@ -1,4 +1,5 @@
 ﻿using Data;
+using UnityEngine;
 
 namespace Gameplay
 {
@@ -25,8 +26,9 @@ public class AsteroidsFactory: IFactory<AsteroidModel, AsteroidSize>
     {
         var healthModel = new HealthModel(data.MaxHealth);
         var speedModel = new RandomSpeedModel(data.MaxSpeed, data.MinSpeed);
-        var model = new AsteroidModel(
-            healthModel, speedModel, data.Damage, data.Size);
+        var model = new AsteroidModel(healthModel, speedModel, 
+            data.Size, data.Damage,  data.RotationTumble, 
+            (Vector3.forward + Vector3.right) * data.ExplosionStrength);
         
         return model;
     }

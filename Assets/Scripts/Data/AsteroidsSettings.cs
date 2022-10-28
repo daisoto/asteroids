@@ -61,5 +61,13 @@ public struct AsteroidData
     [SerializeField]
     private AsteroidBehaviour _prefab; 
     public AsteroidBehaviour Prefab => _prefab;
+    
+    [SerializeField]
+    private float _rotationTumble;
+    public float RotationTumble => _rotationTumble;
+    
+    [SerializeField]
+    private float _explosionStrength;
+    public float ExplosionStrength => _explosionStrength;
 }
 }

@@ -12,7 +12,7 @@ public class AsteroidController: IDisposable
     
     private readonly DisposablesContainer _disposablesContainer;
     
-    private Action<AsteroidSize, Vector3> _onExplode;
+    private Action<AsteroidModel> _onExplode;
     private Action<AsteroidModel> _onDeactivate;
 
     public AsteroidController(AsteroidModel model, 
@@ -29,7 +29,7 @@ public class AsteroidController: IDisposable
     public void Dispose() => _disposablesContainer.Dispose();
     
     public AsteroidController SetOnExplode(
-        Action<AsteroidSize, Vector3> onExplode)
+        Action<AsteroidModel> onExplode)
     {
         _onExplode = onExplode;
         
@@ -50,6 +50,7 @@ public class AsteroidController: IDisposable
             .SetDamage(_model.Damage)
             .SetOnDamage(_model.DecreaseHealth)
             .SetOnCollide(_model.Collide)
+            .SetAngularVelocity(_model.RotationTumble)
             .SetActive(false);
         
         _disposablesContainer.Add(_model.IsActive
@@ -91,7 +92,8 @@ public class AsteroidController: IDisposable
     private async UniTask Destroy()
     {
         _behaviour.SetBaseModel(false);
-        _onExplode?.Invoke(_model.Size, _behaviour.Position);
+        _model.SetPosition(_behaviour.Position);
+        _onExplode?.Invoke(_model);
         await _behaviour.ToggleExplosionAsync();
         if (_model.IsActive.Value)
             _model.Deactivate();

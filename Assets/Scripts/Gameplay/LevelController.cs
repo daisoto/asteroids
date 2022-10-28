@@ -12,6 +12,7 @@ public class LevelController: IInitializable, IDisposable
 {
     private readonly AsteroidsController _asteroidsController;
     private readonly IWorldPointProvider _worldPointProvider;
+    private readonly CameraShaker _cameraShaker;
     private readonly SignalBus _signalBus;
     
     private readonly List<AsteroidModel> _sleepingAsteroidModels;
@@ -25,11 +26,13 @@ public class LevelController: IInitializable, IDisposable
     private Action<int> _onLevelFinished;
 
     public LevelController(AsteroidsController asteroidsController, 
-        IWorldPointProvider worldPointProvider, SignalBus signalBus)
+        IWorldPointProvider worldPointProvider, 
+        CameraShaker cameraShaker, SignalBus signalBus)
     {
         _asteroidsController = asteroidsController;
         _worldPointProvider = worldPointProvider;
         _signalBus = signalBus;
+        _cameraShaker = cameraShaker;
 
         _sleepingAsteroidModels = new List<AsteroidModel>();
         _activeAsteroidModels = new List<AsteroidModel>();
@@ -135,8 +138,14 @@ public class LevelController: IInitializable, IDisposable
         
     }
 
-    private void ProcessCollapse(AsteroidSize size, Vector3 pos)
+    private void ProcessCollapse(AsteroidModel model)
     {
+        var size = model.Size;
+        var pos = model.Position.Value;
+        
+        if (model.ExplosionStrength != Vector3.zero)
+            _cameraShaker.Shake(_delay, model.ExplosionStrength);
+        
         switch (size)
         {
             case AsteroidSize.Small:

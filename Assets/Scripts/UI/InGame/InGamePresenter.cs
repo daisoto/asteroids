@@ -55,6 +55,8 @@ public class InGamePresenter: Presenter<InGameView>, IInitializable, IDisposable
         _signalBus.Unsubscribe<SpaceshipDestroyedSignal>(Close);
         _signalBus.Unsubscribe<LevelEndedSignal>(Close);
     }
+    
+    public void ShowMenu() => _view.ShowMenu();
 
     private void Exit()
     {

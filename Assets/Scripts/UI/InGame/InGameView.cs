@@ -53,17 +53,17 @@ public class InGameView: View
         return this;
     }
     
-    public void CloseMenu()
-    {
-        _menu.SetActive(false);
-        _openButton.gameObject.SetActive(true);
-    }
-    
-    private void ShowMenu()
+    public void ShowMenu()
     {
         _onShowMenu?.Invoke();
         _menu.SetActive(true);
         _openButton.gameObject.SetActive(false);
+    }
+    
+    public void CloseMenu()
+    {
+        _menu.SetActive(false);
+        _openButton.gameObject.SetActive(true);
     }
 }
 }

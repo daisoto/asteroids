@@ -13,7 +13,7 @@ public class AsteroidsController: IDisposable
     
     private readonly List<AsteroidController> _controllers;
     
-    private Action<AsteroidSize, Vector3> _onExplode;
+    private Action<AsteroidModel> _onExplode;
     private Action<AsteroidModel> _onDeactivate;
 
     public AsteroidsController(
@@ -37,7 +37,7 @@ public class AsteroidsController: IDisposable
         _pool.Clear();
     }
     
-    public AsteroidsController SetOnExplode(Action<AsteroidSize, Vector3> onExplode)
+    public AsteroidsController SetOnExplode(Action<AsteroidModel> onExplode)
     {
         _onExplode = onExplode;
         
@@ -71,7 +71,7 @@ public class AsteroidsController: IDisposable
         _pool.Return(model, model.Size);
     }
     
-    private void OnExplode(AsteroidSize size, Vector3 pos) => 
-        _onExplode?.Invoke(size, pos);
+    private void OnExplode(AsteroidModel model) => 
+        _onExplode?.Invoke(model);
 }
 }

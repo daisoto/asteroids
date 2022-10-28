@@ -50,6 +50,13 @@ public class AsteroidBehaviour: SpaceBehaviour
         return this;
     }
     
+    public AsteroidBehaviour SetAngularVelocity(float tumble)
+    {
+        _rigidbody.angularVelocity = UnityEngine.Random.insideUnitSphere * tumble;
+        
+        return this;
+    }
+    
     public void ToggleExplosion() => ToggleExplosionAsync().Forget();
 
     public async UniTask ToggleExplosionAsync() => 

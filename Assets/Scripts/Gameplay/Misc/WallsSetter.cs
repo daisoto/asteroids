@@ -1,12 +1,10 @@
 using UnityEngine;
+using Zenject;
 
 namespace Gameplay
 {
 public class WallsSetter : MonoBehaviour, IWorldPointProvider
 {
-    [SerializeField]
-    private Camera _camera;
-    
     [SerializeField]
     private Transform _topRightWall;
     
@@ -15,6 +13,9 @@ public class WallsSetter : MonoBehaviour, IWorldPointProvider
     
     [SerializeField]
     private Transform _spaceShip;
+    
+    [Inject]
+    private Camera _camera;
     
     private float _depth;
     

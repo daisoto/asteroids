@@ -2,6 +2,7 @@ using System;
 using UniRx;
 using UnityEngine;
 using Core;
+using UI;
 using UnityEngine.EventSystems;
 using Zenject;
 
@@ -11,6 +12,7 @@ public class PlayerController: IInitializable, IDisposable
 {
     private readonly InputManager _inputManager;
     private readonly SpaceshipController _spaceshipController;
+    private readonly InGamePresenter _inGamePresenter;
     private readonly BlasterController _blasterController;
     private readonly EventSystem _eventSystem;
     
@@ -22,18 +24,25 @@ public class PlayerController: IInitializable, IDisposable
 
     public PlayerController(InputManager inputManager, 
         SpaceshipController spaceshipController,
-        BlasterController blasterController, EventSystem eventSystem)
+        BlasterController blasterController, 
+        InGamePresenter inGamePresenter,
+        EventSystem eventSystem)
     {
         _inputManager = inputManager;
         _spaceshipController = spaceshipController;
         _blasterController = blasterController;
         _eventSystem = eventSystem;
+        _inGamePresenter = inGamePresenter;
     }
     
-    public void Initialize() => 
+    public void Initialize() =>
         _spaceshipController.SetOnExplosion(Deactivate);
     
-    public void Dispose() => _updateObservation?.Dispose();
+    public void Dispose() 
+    {
+        _updateObservation?.Dispose();
+        _inputManager.OnPause -= _inGamePresenter.ShowMenu;
+    }
     
     public void SetActive(bool flag)
     {
@@ -43,13 +52,15 @@ public class PlayerController: IInitializable, IDisposable
             SetObservation();
         else
         {
-            _updateObservation?.Dispose();
+            Dispose();
             _inputManager.Reset();
         }
     }
     
     private void SetObservation()
     {
+        _inputManager.OnPause += _inGamePresenter.ShowMenu;
+        
         _updateObservation = Observable.EveryUpdate().Subscribe(_ =>
         {
             _spaceshipController.Move(_moving);

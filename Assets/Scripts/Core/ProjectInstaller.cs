@@ -58,6 +58,10 @@ public class ProjectInstaller : MonoInstaller
         Container.BindInterfacesAndSelfTo<BlasterController>()
             .AsSingle()
             .NonLazy();
+        
+        Container.BindInterfacesAndSelfTo<CameraShaker>()
+            .AsSingle()
+            .NonLazy();
     }
     
     private void BindUI()
