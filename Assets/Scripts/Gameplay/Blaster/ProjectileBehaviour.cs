@@ -12,6 +12,7 @@ public class ProjectileBehaviour: SpaceBehaviour
     public ProjectileBehaviour SetDamage(int damage)
     {
         Damage = damage;
+        _rigidbody.mass = damage;
         
         return this;
     }

@@ -19,7 +19,6 @@ public class MapPresenter: Presenter<MapView>, IInitializable, IDisposable
     private readonly DisposablesContainer _disposablesContainer;
     
     private Action _onBack;
-    private Action _onPlanetChose;
 
     private Color _finishedColor => _levelsSettings.FinishedColor; 
     private Color _openedColor => _levelsSettings.OpenedColor; 
@@ -48,6 +47,7 @@ public class MapPresenter: Presenter<MapView>, IInitializable, IDisposable
         _signalBus.Subscribe<LevelStartedSignal>(Close);
         _signalBus.Subscribe<SetSpaceshipDataSignal>(UpdatePlanetModels);
         _signalBus.Subscribe<LevelFinishedSignal>(SetFinished);
+        _signalBus.Subscribe<LevelEndedSignal>(Show);
     }
     
     public void Dispose() 
@@ -55,19 +55,13 @@ public class MapPresenter: Presenter<MapView>, IInitializable, IDisposable
         _signalBus.Unsubscribe<LevelStartedSignal>(Close);
         _signalBus.Unsubscribe<SetSpaceshipDataSignal>(UpdatePlanetModels);
         _signalBus.Unsubscribe<LevelFinishedSignal>(SetFinished);
+        _signalBus.Unsubscribe<LevelEndedSignal>(Show);
         _disposablesContainer.Dispose();
     }
 
     public MapPresenter SetOnBack(Action onBack)
     {
         _onBack = onBack;
-        
-        return this;
-    }
-
-    public MapPresenter SetOnPlanetChose(Action onPlanetChose)
-    {
-        _onPlanetChose = onPlanetChose;
         
         return this;
     }
@@ -99,8 +93,10 @@ public class MapPresenter: Presenter<MapView>, IInitializable, IDisposable
             
             if (_models.Count >= level)
             {
-                _models[level - 1].IsAvailable.Value = isAvailable;
-                _models[level - 1].IsFinished.Value = isFinished;
+                _models[level - 1].IsAvailable
+                    .SetValueAndForceNotify(isAvailable);
+                _models[level - 1].IsFinished
+                    .SetValueAndForceNotify(isFinished);
             }
             else
                 _models.Add(
@@ -147,11 +143,7 @@ public class MapPresenter: Presenter<MapView>, IInitializable, IDisposable
             .ToDictionary(ld => ld.Level, ld => ld);
     }
     
-    private void StartLevel(int level)
-    {
-        _onPlanetChose?.Invoke();
-        _levelsController.StartLevel(level);
-    }
+    private void StartLevel(int level) => _levelsController.StartLevel(level);
 
     private void SetFinished(LevelFinishedSignal signal)
     {
@@ -162,6 +154,5 @@ public class MapPresenter: Presenter<MapView>, IInitializable, IDisposable
         if (_models.Count > level)
             _models[level].IsAvailable.Value = true;
     }
-        
 }
 }

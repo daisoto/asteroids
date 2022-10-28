@@ -27,7 +27,7 @@ MonoBehaviour:
     _prefab: {fileID: 3788273639367190154, guid: 2dfe8ee6f69f7dd4e93b1bd71c176f75, type: 3}
   - _size: 2
     _maxHealth: 3
-    _minSpeed: 0.5
+    _minSpeed: 0.75
     _maxSpeed: 1
     _damage: 1
     _prefab: {fileID: 4371823621302393809, guid: 7503124b666cdcb40b6ab57774c80767, type: 3}

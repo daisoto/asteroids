@@ -15,10 +15,10 @@ public class ShipCharacteristicsView: View
     
     public void Init(int maxNum)
     {
-        _healthBarView.Init(maxNum);
-        _damageBarView.Init(maxNum);
-        _fireRateBarView.Init(maxNum);
-        _speedBarView.Init(maxNum);
+        _healthBarView.Construct(maxNum);
+        _damageBarView.Construct(maxNum);
+        _fireRateBarView.Construct(maxNum);
+        _speedBarView.Construct(maxNum);
     }
     
     public void SetHealth(int num) => _healthBarView.SetCells(num);

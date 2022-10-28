@@ -20,7 +20,8 @@ public class LevelController: IInitializable, IDisposable
     private int _asteroidsNum; 
     private int _currentLevel;
     private float _delay;
-    private bool _isPlaying;
+    // private bool _isPlaying;
+    private CancellationDisposable _playingCancellation; 
     private Action<int> _onLevelFinished;
 
     public LevelController(AsteroidsController asteroidsController, 
@@ -37,7 +38,7 @@ public class LevelController: IInitializable, IDisposable
     public void Initialize()
     {
         _signalBus.Subscribe<SpaceshipDestroyedSignal>(StopPlaying);
-        _signalBus.Subscribe<EndLevelSignal>(OnLevelEnd);
+        _signalBus.Subscribe<LevelEndedSignal>(OnLevelEnd);
         
         _asteroidsController
             .SetOnExplode(ProcessCollapse)
@@ -47,7 +48,7 @@ public class LevelController: IInitializable, IDisposable
     public void Dispose()
     {
         _signalBus.Unsubscribe<SpaceshipDestroyedSignal>(StopPlaying);
-        _signalBus.Unsubscribe<EndLevelSignal>(OnLevelEnd);
+        _signalBus.Unsubscribe<LevelEndedSignal>(OnLevelEnd);
     }
     
     public LevelController SetOnLevelFinished(Action<int> onLevelFinished)
@@ -66,7 +67,7 @@ public class LevelController: IInitializable, IDisposable
     
     public void StartLevel(LevelData levelData)
     {
-        _isPlaying = true;
+        _playingCancellation = new CancellationDisposable();
         _currentLevel = levelData.Level;
         
         var sizes = EnumUtils.GetValues<AsteroidSize>();
@@ -92,7 +93,7 @@ public class LevelController: IInitializable, IDisposable
         DeactivateRemaining();
     }
     
-    private void StopPlaying() => _isPlaying = false;
+    private void StopPlaying() => _playingCancellation?.Dispose();
     
     private void DeactivateRemaining() 
     {
@@ -108,10 +109,11 @@ public class LevelController: IInitializable, IDisposable
     
     private async UniTask LevelSequence()
     {
-        while (_isPlaying && _sleepingAsteroidModels.Count > 0)
+        while (_sleepingAsteroidModels.Count > 0)
         {
             var asteroid = _sleepingAsteroidModels.PickRandom();
-            await UniTask.Delay(TimeSpan.FromSeconds(_delay));
+            await UniTask.Delay(TimeSpan.FromSeconds(_delay), 
+                cancellationToken: _playingCancellation.Token);
             
             _sleepingAsteroidModels.Remove(asteroid);
             SetAsteroid(asteroid, GetRandomPosition());
@@ -135,10 +137,7 @@ public class LevelController: IInitializable, IDisposable
 
     private void ProcessCollapse(AsteroidSize size, Vector3 pos)
     {
-        if (!_isPlaying)
-            return;
-        
-        switch (size) // Todo to different classes?
+        switch (size)
         {
             case AsteroidSize.Small:
                 _asteroidsNum -= 1;

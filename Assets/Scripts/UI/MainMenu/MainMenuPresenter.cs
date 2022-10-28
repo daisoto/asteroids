@@ -30,12 +30,11 @@ public class MainMenuPresenter: Presenter<MainMenuView>, IInitializable
             .SetContinue(CheckSave())
             .OnExit(Exit);
     }
-    
-    public MainMenuPresenter Update()
+
+    public override void Show()
     {
         _view.SetContinue(CheckSave());
-        
-        return this;
+        base.Show();
     }
     
     public MainMenuPresenter SetOnNewGame(Action onNewGame)

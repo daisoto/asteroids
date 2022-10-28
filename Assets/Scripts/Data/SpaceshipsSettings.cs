@@ -41,17 +41,17 @@ public class SpaceshipData
     private string _title;
     public string Title { get => _title; set => _title = value; }
 
-    [SerializeField, Range(1, 3)]
+    [SerializeField]
     private int _damage;
     public int Damage 
     { get => _damage; set => _damage = value; }
     
-    [SerializeField, Range(1, 3)]
+    [SerializeField]
     private int _fireRate;
     public int FireRate 
     { get => _fireRate; set => _fireRate = value; }
     
-    [SerializeField, Range(1, 3)]
+    [SerializeField]
     private int _speed;
     public int Speed 
     { get => _speed; set => _speed = value; }

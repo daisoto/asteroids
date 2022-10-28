@@ -45,8 +45,9 @@ public class EndGamePresenter: Presenter<EndGameView>,
     
     private void ToLevels()
     {
+        Close();
         _toLevels?.Invoke();
-        _signalBus.Fire(new EndLevelSignal());
+        _signalBus.Fire(new LevelEndedSignal());
     }
 }
 }

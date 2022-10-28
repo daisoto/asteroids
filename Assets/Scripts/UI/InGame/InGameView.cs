@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace UI
 {
-public class InGameMenuView: View
+public class InGameView: View
 {
     [SerializeField]
     private Button _openButton;
@@ -32,21 +32,21 @@ public class InGameMenuView: View
         _exitButton.onClick.RemoveAllListeners();
     }
     
-    public InGameMenuView SetOnShowMenu(Action onShowMenu)
+    public InGameView SetOnShowMenu(Action onShowMenu)
     {
         _onShowMenu = onShowMenu;
         
         return this;
     }
     
-    public InGameMenuView SetOnContinue(Action onContinue)
+    public InGameView SetOnContinue(Action onContinue)
     {
         _continueButton.onClick.AddListener(onContinue.Invoke);
         
         return this;
     }
 
-    public InGameMenuView SetOnExit(Action onExit)
+    public InGameView SetOnExit(Action onExit)
     {
         _exitButton.onClick.AddListener(onExit.Invoke);
         

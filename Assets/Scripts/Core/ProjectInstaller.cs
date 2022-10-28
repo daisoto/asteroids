@@ -74,11 +74,7 @@ public class ProjectInstaller : MonoInstaller
             .AsSingle()
             .NonLazy();
         
-        Container.BindInterfacesAndSelfTo<ShipHealthPresenter>()
-            .AsSingle()
-            .NonLazy();
-        
-        Container.BindInterfacesAndSelfTo<InGameMenuPresenter>()
+        Container.BindInterfacesAndSelfTo<InGamePresenter>()
             .AsSingle()
             .NonLazy();
         

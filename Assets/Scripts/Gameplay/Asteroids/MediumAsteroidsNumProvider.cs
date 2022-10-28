@@ -19,6 +19,9 @@ public class MediumAsteroidsNumProvider: IAsteroidsNumProvider
         var max = Mathf.RoundToInt(-(level * level) + b * level);
         var min = Mathf.RoundToInt(max - _step);
         
+        if (min < 0) 
+            min = 0;
+        
         return RandomUtils.GetInt(min, max);
     }
 }

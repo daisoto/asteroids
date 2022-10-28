@@ -35,14 +35,14 @@ public class BlasterController: IInitializable, IDisposable
     public void Initialize()
     {
         _signalBus.Subscribe<SetSpaceshipDataSignal>(SetData);
-        _signalBus.Subscribe<EndLevelSignal>(OnLevelEnd);
+        _signalBus.Subscribe<LevelEndedSignal>(OnLevelEnd);
     }
     
     public void Dispose()
     {
         _model?.Dispose();
         _signalBus.Unsubscribe<SetSpaceshipDataSignal>(SetData);
-        _signalBus.Unsubscribe<EndLevelSignal>(OnLevelEnd);
+        _signalBus.Unsubscribe<LevelEndedSignal>(OnLevelEnd);
         _disposablesContainer.Dispose();
         _projectilesPool.Clear();
     }

@@ -14,7 +14,7 @@ public class CompoundBarView: View
     
     private readonly List<GameObject> _cells = new List<GameObject>();
     
-    public void Init(int maxNum)
+    public void Construct(int maxNum)
     {
         var curCount = _cells.Count;
         if (curCount < maxNum)
