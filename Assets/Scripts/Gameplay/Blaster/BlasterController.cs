@@ -15,6 +15,8 @@ public class BlasterController: IInitializable, IDisposable
     private readonly SignalBus _signalBus; 
     
     private readonly List<ProjectileModel> _activeModels;
+    private readonly List<ProjectileBehaviour> _behaviours;
+    
     private readonly DisposablesContainer _disposablesContainer;
     
     private BlasterModel _model;
@@ -29,6 +31,7 @@ public class BlasterController: IInitializable, IDisposable
 
         _projectilesPool = GetProjectilesPool();
         _activeModels = new List<ProjectileModel>();
+        _behaviours = new List<ProjectileBehaviour>();
         _disposablesContainer = new DisposablesContainer();
     }
 
@@ -51,6 +54,7 @@ public class BlasterController: IInitializable, IDisposable
     {
         _model?.Dispose();
         _model = GetBlasterModel(signal.Data);
+        _behaviours.ForEach(b => b.SetDamage(_model.Damage));
     }
     
     public void TryToFire()
@@ -135,6 +139,8 @@ public class BlasterController: IInitializable, IDisposable
         _disposablesContainer.Add(model.Speed
             .Subscribe(speed => 
                 behaviour.SetSpeed(speed)));
+        
+        _behaviours.Add(behaviour);
     }
 }
 }
