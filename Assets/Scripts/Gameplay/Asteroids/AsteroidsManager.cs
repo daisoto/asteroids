@@ -11,10 +11,10 @@ public class AsteroidsManager: IDisposable
     private readonly IFactory<AsteroidBehaviour, AsteroidSize> 
         _behavioursFactory;
     
-    private readonly List<AsteroidController> _controllers;
-    
     private Action<AsteroidModel> _onExplode;
     private Action<AsteroidModel> _onDeactivate;
+    
+    private DisposablesContainer _disposablesContainer;
 
     public AsteroidsManager(
         IFactory<AsteroidBehaviour, AsteroidSize> behavioursFactory,
@@ -28,12 +28,12 @@ public class AsteroidsManager: IDisposable
         
         _pool = new AsteroidsPool(dModelsFactory);
         
-        _controllers = new List<AsteroidController>();
+        _disposablesContainer = new DisposablesContainer();
     }
     
     public void Dispose() 
     {
-        _controllers.ForEach(c => c.Dispose());
+        _disposablesContainer.Dispose();
         _pool.Clear();
     }
     
@@ -62,7 +62,7 @@ public class AsteroidsManager: IDisposable
             .SetOnDeactivate(OnDeactivateModel)
             .SetOnExplode(OnExplode);
         
-        _controllers.Add(controller);
+        _disposablesContainer.Add(controller);
     }
     
     private void OnDeactivateModel(AsteroidModel model) 
