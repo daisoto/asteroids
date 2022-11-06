@@ -100,7 +100,7 @@ public class ProjectInstaller : MonoInstaller
             .AsSingle()
             .NonLazy();
         
-        Container.BindInterfacesAndSelfTo<LevelsController>()
+        Container.BindInterfacesAndSelfTo<LevelsManager>()
             .AsSingle()
             .NonLazy();
 

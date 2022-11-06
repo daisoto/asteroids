@@ -6,7 +6,7 @@ using Zenject;
 
 namespace Gameplay
 {
-public class LevelsController: IInitializable, IDisposable
+public class LevelsManager: IInitializable, IDisposable
 {
     private readonly Dictionary<AsteroidSize, IAsteroidsNumProvider> 
         _asteroidsNumProviders;
@@ -22,7 +22,7 @@ public class LevelsController: IInitializable, IDisposable
     private int _minAsteroidsNum => _asteroidsSettings.MinAsteroidsNum;
     private int _maxAsteroidsNum => _asteroidsSettings.MaxAsteroidsNum;
 
-    public LevelsController(LevelController levelController,
+    public LevelsManager(LevelController levelController,
         [Inject(Id = AsteroidSize.Small)]
         IAsteroidsNumProvider smallAsteroidNumProvider, 
         [Inject(Id = AsteroidSize.Medium)]

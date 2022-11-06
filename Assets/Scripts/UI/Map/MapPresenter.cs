@@ -12,7 +12,7 @@ namespace UI
 public class MapPresenter: Presenter<MapView>, IInitializable, IDisposable
 {
     private readonly LevelsSettings _levelsSettings;
-    private readonly LevelsController _levelsController;
+    private readonly LevelsManager _levelsManager;
     private readonly SignalBus _signalBus;
     
     private readonly List<PlanetModel> _models;
@@ -25,10 +25,10 @@ public class MapPresenter: Presenter<MapView>, IInitializable, IDisposable
     private Color _closedColor => _levelsSettings.ClosedColor; 
     
     public MapPresenter(MapView view, 
-        LevelsController levelsController, 
+        LevelsManager levelsManager, 
         LevelsSettings levelsSettings, SignalBus signalBus) : base(view)
     {
-        _levelsController = levelsController;
+        _levelsManager = levelsManager;
         _levelsSettings = levelsSettings;
         _signalBus = signalBus;
 
@@ -138,12 +138,12 @@ public class MapPresenter: Presenter<MapView>, IInitializable, IDisposable
     
     private Dictionary<int, LevelData> GetLevelsDataDict()
     {
-        return _levelsController
+        return _levelsManager
             .SavedLevelsData
             .ToDictionary(ld => ld.Level, ld => ld);
     }
     
-    private void StartLevel(int level) => _levelsController.StartLevel(level);
+    private void StartLevel(int level) => _levelsManager.StartLevel(level);
 
     private void SetFinished(LevelFinishedSignal signal)
     {
