@@ -10,7 +10,7 @@ namespace Gameplay
 {
 public class LevelController: IInitializable, IDisposable
 {
-    private readonly AsteroidsController _asteroidsController;
+    private readonly AsteroidsManager _asteroidsManager;
     private readonly IWorldPointProvider _worldPointProvider;
     private readonly CameraShaker _cameraShaker;
     private readonly SignalBus _signalBus;
@@ -25,11 +25,11 @@ public class LevelController: IInitializable, IDisposable
     private CancellationDisposable _playingCancellation; 
     private Action<int> _onLevelFinished;
 
-    public LevelController(AsteroidsController asteroidsController, 
+    public LevelController(AsteroidsManager asteroidsManager, 
         IWorldPointProvider worldPointProvider, 
         CameraShaker cameraShaker, SignalBus signalBus)
     {
-        _asteroidsController = asteroidsController;
+        _asteroidsManager = asteroidsManager;
         _worldPointProvider = worldPointProvider;
         _signalBus = signalBus;
         _cameraShaker = cameraShaker;
@@ -43,7 +43,7 @@ public class LevelController: IInitializable, IDisposable
         _signalBus.Subscribe<SpaceshipDestroyedSignal>(StopPlaying);
         _signalBus.Subscribe<LevelEndedSignal>(OnLevelEnd);
         
-        _asteroidsController
+        _asteroidsManager
             .SetOnExplode(ProcessCollapse)
             .SetOnDeactivate(RemoveFromList);
     }
@@ -81,7 +81,7 @@ public class LevelController: IInitializable, IDisposable
             
             for (int i = 0; i < num; i++)
             {
-                var asteroid = _asteroidsController.Get(size);
+                var asteroid = _asteroidsManager.Get(size);
                 _sleepingAsteroidModels.Add(asteroid);
             }
         }
@@ -153,13 +153,13 @@ public class LevelController: IInitializable, IDisposable
                 CheckLevelFinished();
                 break;
             case AsteroidSize.Medium:
-                SetAsteroid(_asteroidsController.Get(AsteroidSize.Small), pos);
-                SetAsteroid(_asteroidsController.Get(AsteroidSize.Small), pos);
+                SetAsteroid(_asteroidsManager.Get(AsteroidSize.Small), pos);
+                SetAsteroid(_asteroidsManager.Get(AsteroidSize.Small), pos);
                 _asteroidsNum++;
                 break;
             case AsteroidSize.Big:
-                SetAsteroid(_asteroidsController.Get(AsteroidSize.Medium), pos);
-                SetAsteroid(_asteroidsController.Get(AsteroidSize.Medium), pos);
+                SetAsteroid(_asteroidsManager.Get(AsteroidSize.Medium), pos);
+                SetAsteroid(_asteroidsManager.Get(AsteroidSize.Medium), pos);
                 _asteroidsNum++;
                 break;
         }

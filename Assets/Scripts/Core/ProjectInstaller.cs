@@ -127,7 +127,7 @@ public class ProjectInstaller : MonoInstaller
             .FromInstance(new MediumAsteroidsNumProvider(_levelsSettings.MaxLevel))
             .NonLazy();
         
-        Container.BindInterfacesAndSelfTo<AsteroidsController>()
+        Container.BindInterfacesAndSelfTo<AsteroidsManager>()
             .AsSingle()
             .NonLazy();
     }

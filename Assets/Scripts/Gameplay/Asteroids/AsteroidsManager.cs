@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Gameplay
 {
-public class AsteroidsController: IDisposable
+public class AsteroidsManager: IDisposable
 {
     private readonly IPool<AsteroidModel, AsteroidSize> _pool;
     
@@ -16,7 +16,7 @@ public class AsteroidsController: IDisposable
     private Action<AsteroidModel> _onExplode;
     private Action<AsteroidModel> _onDeactivate;
 
-    public AsteroidsController(
+    public AsteroidsManager(
         IFactory<AsteroidBehaviour, AsteroidSize> behavioursFactory,
         IFactory<AsteroidModel, AsteroidSize> modelsFactory)
     {
@@ -37,14 +37,14 @@ public class AsteroidsController: IDisposable
         _pool.Clear();
     }
     
-    public AsteroidsController SetOnExplode(Action<AsteroidModel> onExplode)
+    public AsteroidsManager SetOnExplode(Action<AsteroidModel> onExplode)
     {
         _onExplode = onExplode;
         
         return this;
     }
     
-    public AsteroidsController SetOnDeactivate(Action<AsteroidModel> onDeactivate)
+    public AsteroidsManager SetOnDeactivate(Action<AsteroidModel> onDeactivate)
     {
         _onDeactivate = onDeactivate;
         
